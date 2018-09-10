@@ -1,0 +1,53 @@
+Chapter 2: Intelligent Agents:
+
+Keywords:
+1. Rational Agents (perceive environment, act using actuators)
+2. Sensor
+3. Actuator
+4. Percept
+5. Percept sequence
+6. Agent function (abstract mathematical characterization)
+7. Agent program (actual implementation)
+8. Priori (the environment is already completely known.)
+9. Omniscient agents
+10. Task Environments
+11. Software agents (softbots)
+12. Fully observable
+13. Partially observable
+
+- 2.2 Good Behavior: The Concept of Rationality
+  * We want a rational agent to do the right thing. In previous pages, the
+  rational agent would fill out the every entry in the agent function correctly.
+  * What are the consequences of an agent's behavior?
+  * The notion of desirability is captured through performance measure
+    - Evaluates any given sequence of environment states.
+    - Choosing the right reward is difficult, and depends on the given situation
+  * Rationality at any given time:
+    - Agent's prior experience with the environment.
+    - What the agent's potential actions are.
+    - The agent's percept sequence to date.
+    - The performance measure that determines success.
+  * Rational Agent:
+    - For each possible percept sequence, a rational agent should select an action
+     that is expected to maximize its performance measure, given the evidence
+     provided by the percept sequence and whatever built-in knowledge the agent has.
+  * Difference between a rational and omniscient agent:
+    - Omniscient agents know the actual outcome of its actions and can act accordingly.
+      * Rationality depends on information known to date, can't see future outcomes.
+    - Rationality maximizes expected performance, while perfection maximizes actual performance.
+  * Information Gathering: doing actions in order to modify future percepts, or through exploration.
+  * We want the rational agent to do both information gathering and also learn from its perceptions.
+    - In the case of a priori, the agent doesn't need to gather info or learn, it
+    just needs to act accordingly.
+  * An agent lacks autonomy if an agent relies on the prior knowledge of the designer,
+  instead of its own percepts.
+    - When an agent has little experience, then acting randomly makes more sense than
+    acting upon its known percepts (or designer gives some assistance.)
+    - The incorporation of learning allows a rational agent to succeed in a variety of environments.
+- 2.3 The Nature of Environments:
+  * Task environment: the grouping of performance measure, environment, and agent's actuators/sensors.
+    - This is known as the PEAS acronym.
+    - This should be the first step in designing an agent, and want to be as detailed as possible.
+  * Fully observable: the agent can perceive the environment fully through the usage of its sensors.
+    - Technically, an agent is fully observable if the sensors give it relevant to the choice of action
+    at any given point in time.
