@@ -102,23 +102,42 @@ def depthFirstSearch(problem):
     #
     #     # chose a leaf node and remove from frontier
 
+    def print_stack(stack):
+        while not stack.isEmpty():
+            current_item = stack.pop()
+            print('Stack element: ', current_item, 'type of element: ', type(current_item))
+
 
     frontier = util.Stack()
-    explored_states = []
-    start_state = problem.getStartState()
-    frontier.push(start_state)
+    found = True
+    explored_states = list()
+    frontier.push(problem.getStartState())
+
+    # Initialize the frontier to be the initial state
+    # Expand the frontier to get its successor states
 
     while True:
         if frontier.isEmpty():
-            return False 
+            return False;
 
-        # pick a leaf node and pop off frontier
-        print(frontier.pop())
+        current_state = frontier.pop()
+        print('1. Popping off the current state from the fringe: ', current_state)
 
-    # while True:
-    #     if not frontier:
-    #         return False
+        # check if current state is a goal state
+        if problem.isGoalState(current_state[0]):
+            print('Found goal state node')
+            return explored_states
 
+        # add the node to the explored state (0 marks the index with the state str)
+        explored_states.append(current_state)
+
+        # expand the chosen node, adding the resulting nodes to the frontier
+        for state in problem.getSuccessors(current_state[0]):
+            if state not in explored_states:
+                frontier.push(state)
+
+
+    print('Explored set: ', explored_states)
 
 
     util.raiseNotDefined()
