@@ -102,15 +102,11 @@ def depthFirstSearch(problem):
     #
     #     # chose a leaf node and remove from frontier
 
-    def print_stack(stack):
-        while not stack.isEmpty():
-            current_item = stack.pop()
-            print('Stack element: ', current_item, 'type of element: ', type(current_item))
-
-
     frontier = util.Stack()
-    found = True
     explored_states = list()
+    solution = list()
+    # need to make a tuple for this to work
+    # start_state = tuple(problem.getStartState, )
     frontier.push(problem.getStartState())
 
     # Initialize the frontier to be the initial state
@@ -121,23 +117,35 @@ def depthFirstSearch(problem):
             return False;
 
         current_state = frontier.pop()
-        print('1. Popping off the current state from the fringe: ', current_state)
+        print('Current state: ', current_state)
 
         # check if current state is a goal state
         if problem.isGoalState(current_state[0]):
-            print('Found goal state node')
-            return explored_states
+            # get the current path of node
+            solution.append(current_state[1])
+            # get the previous path of node
+            return solution
 
         # add the node to the explored state (0 marks the index with the state str)
-        explored_states.append(current_state)
+        explored_states.append(current_state[0])
+
+        successors_list = problem.getSuccessors(current_state[0])
+
+        if len(successors_list) is not 0 and len(current_state) is not 1:
+            solution.append(current_state[1])
 
         # expand the chosen node, adding the resulting nodes to the frontier
-        for state in problem.getSuccessors(current_state[0]):
-            if state not in explored_states:
+        for state in successors_list:
+            print('State: ', state)
+            print('Explored set: ', explored_states)
+            if state[0] not in explored_states:
+                print('Pushing state: ', state)
                 frontier.push(state)
 
+    # make the set a list again
+    # explored_states = list(explored_states)
 
-    print('Explored set: ', explored_states)
+    # print('Explored set: ', explored_states)
 
 
     util.raiseNotDefined()
