@@ -93,64 +93,31 @@ def depthFirstSearch(problem):
     frontier = util.Stack()
     explored_states = list()
     solution = list()
-    # need to make a tuple for this to work
     start_state = problem.getStartState()
-    print('Start state: ', start_state)
     frontier.push(start_state)
-
-    direction_flag = False
-
-    # Initialize the frontier to be the initial state
-    # Expand the frontier to get its successor states
-
-    if len(start_state) is 2:
-        direction_flag = True
 
     while True:
         if frontier.isEmpty():
             return False;
 
-        current_state = frontier.pop()
-        # print('Current state', current_state)
+        # pushing the entire state info to the stack
+        state_name, state_dir, disregard = frontier.pop()
 
-        if direction_flag:
-            return []
-        #     print('Current state: ', current_state)
-        #     if problem.isGoalState(current_state):
-        #         print('Found a solution: ')
-        #         solution.append(current_state)
-        #         return solution
-        #
-        #     if len(current_state) is not 2:
-        #         explored_states.append(current_state[1])
-        #         successors_list = problem.getSuccessors(current_state[0])
-        #     else:
-        #         explored_states.append(current_state)
-        #         successors_list = problem.getSuccessors(current_state)
-        #
-        #     print('Explored states: ', explored_states)
-        #     print('Successors: ', successors_list)
-        #
-        #     for state in successors_list:
-        #         if state[1] not in explored_states:
-        #             frontier.push(state)
-        # else:
-            # check if current state is a goal state
-        if problem.isGoalState(current_state[0]):
-            solution.append(current_state[1])
+        # check if the name portion of the current_state
+        if problem.isGoalState(state_name):
+            solution.append(state_dir)
             return solution
 
-        # add the str portion of the node tuple to explored states
-        explored_states.append(current_state[0])
-        successors_list = problem.getSuccessors(current_state[0])
+        explored_states.append(state_name)
+        successors_list = problem.getSuccessors(state_dir)
 
         if len(successors_list) is not 0 and len(current_state) is not 1:
-            solution.append(current_state[1])
+            solution.append(state_dir)
 
         # expand the chosen node, adding the resulting nodes to the frontier
-        for state in successors_list:
-            if state[0] not in explored_states:
-                frontier.push(state)
+        for (name, dir, cost) in successors_list:
+            if name not in explored_states:
+                frontier.push(name, dir)
 
     util.raiseNotDefined()
 
