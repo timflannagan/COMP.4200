@@ -19,6 +19,7 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
+import node
 
 class SearchProblem:
     """
@@ -88,37 +89,34 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    from game import Directions
-
     frontier = util.Stack()
     explored_states = list()
     solution = list()
-    start_state = (problem.getStartState(), '')
+    # was having problems with coordinates and out of range indexing so translate to tuple
+    start_state = node.Node(problem.getStartState(), '', '')
     frontier.push(start_state)
-    # print(start_state)
-
-    if len(start_state) is 2:
-        direction_flag = True
 
     while True:
+        # loop invariant
         if frontier.isEmpty():
             return False;
 
-        state_name, state_dir = frontier.pop()
+        # pop a node off the frontier
+        current_node = frontier.pop()
 
-        if problem.isGoalState(state_name):
-            solution.append(state_dir)
-            return solution
+        # check if current node is in goal state, return the path to the goal state node
+        if problem.isGoalState(current_node.state):
+            return current_node.path()
 
-        explored_states.append(state_name)
-        successors_list = problem.getSuccessors(state_name)
+        # add current node to visited nodes and get list of successors
+        successors_list = current_node.expand(problem)
+        explored_states.append(current_node.state)
 
-        if len(successors_list) is not 0 and state_dir is not '':
-            solution.append(state_dir)
-
-        for state in successors_list:
-            if state[0] not in explored_states:
-                frontier.push((state[0], state[1]))
+        # iterate through each of the successor nodes of the current node
+        for elem in successors_list:
+            # check if node is already been visited, else push to fringe
+            if elem.state not in explored_states:
+                frontier.push(node.Node(elem.state, current_node, elem.action, elem.path_cost))
 
     util.raiseNotDefined()
 
