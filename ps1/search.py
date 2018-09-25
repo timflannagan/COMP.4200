@@ -93,31 +93,32 @@ def depthFirstSearch(problem):
     frontier = util.Stack()
     explored_states = list()
     solution = list()
-    start_state = problem.getStartState()
+    start_state = (problem.getStartState(), '')
     frontier.push(start_state)
+    # print(start_state)
+
+    if len(start_state) is 2:
+        direction_flag = True
 
     while True:
         if frontier.isEmpty():
             return False;
 
-        # pushing the entire state info to the stack
-        state_name, state_dir, disregard = frontier.pop()
+        state_name, state_dir = frontier.pop()
 
-        # check if the name portion of the current_state
         if problem.isGoalState(state_name):
             solution.append(state_dir)
             return solution
 
         explored_states.append(state_name)
-        successors_list = problem.getSuccessors(state_dir)
+        successors_list = problem.getSuccessors(state_name)
 
-        if len(successors_list) is not 0 and len(current_state) is not 1:
+        if len(successors_list) is not 0 and state_dir is not '':
             solution.append(state_dir)
 
-        # expand the chosen node, adding the resulting nodes to the frontier
-        for (name, dir, cost) in successors_list:
-            if name not in explored_states:
-                frontier.push(name, dir)
+        for state in successors_list:
+            if state[0] not in explored_states:
+                frontier.push((state[0], state[1]))
 
     util.raiseNotDefined()
 
