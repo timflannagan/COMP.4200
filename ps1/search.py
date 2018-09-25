@@ -88,47 +88,60 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-
-    # # Initialize the frontier using the initial state of the problem
-    # frontier = [problem.getStartState()]
-    # # Initialize the explored set to be an empty list
-    # explored = []
-    #
-    # # traverse the problem states to find the deepest node first
-    # while not problem.isGoalState(problem.getStartState()):
-    #     # check if the frontier is empty ; return failure
-    #     if not frontier:
-    #         return False
-    #
-    #     # chose a leaf node and remove from frontier
+    from game import Directions
 
     frontier = util.Stack()
     explored_states = list()
     solution = list()
     # need to make a tuple for this to work
-    # start_state = tuple(problem.getStartState, )
-    frontier.push(problem.getStartState())
+    start_state = problem.getStartState()
+    print('Start state: ', start_state)
+    frontier.push(start_state)
+
+    direction_flag = False
 
     # Initialize the frontier to be the initial state
     # Expand the frontier to get its successor states
+
+    if len(start_state) is 2:
+        direction_flag = True
 
     while True:
         if frontier.isEmpty():
             return False;
 
         current_state = frontier.pop()
-        print('Current state: ', current_state)
+        # print('Current state', current_state)
 
-        # check if current state is a goal state
+        if direction_flag:
+            return []
+        #     print('Current state: ', current_state)
+        #     if problem.isGoalState(current_state):
+        #         print('Found a solution: ')
+        #         solution.append(current_state)
+        #         return solution
+        #
+        #     if len(current_state) is not 2:
+        #         explored_states.append(current_state[1])
+        #         successors_list = problem.getSuccessors(current_state[0])
+        #     else:
+        #         explored_states.append(current_state)
+        #         successors_list = problem.getSuccessors(current_state)
+        #
+        #     print('Explored states: ', explored_states)
+        #     print('Successors: ', successors_list)
+        #
+        #     for state in successors_list:
+        #         if state[1] not in explored_states:
+        #             frontier.push(state)
+        # else:
+            # check if current state is a goal state
         if problem.isGoalState(current_state[0]):
-            # get the current path of node
             solution.append(current_state[1])
-            # get the previous path of node
             return solution
 
-        # add the node to the explored state (0 marks the index with the state str)
+        # add the str portion of the node tuple to explored states
         explored_states.append(current_state[0])
-
         successors_list = problem.getSuccessors(current_state[0])
 
         if len(successors_list) is not 0 and len(current_state) is not 1:
@@ -136,17 +149,8 @@ def depthFirstSearch(problem):
 
         # expand the chosen node, adding the resulting nodes to the frontier
         for state in successors_list:
-            print('State: ', state)
-            print('Explored set: ', explored_states)
             if state[0] not in explored_states:
-                print('Pushing state: ', state)
                 frontier.push(state)
-
-    # make the set a list again
-    # explored_states = list(explored_states)
-
-    # print('Explored set: ', explored_states)
-
 
     util.raiseNotDefined()
 
