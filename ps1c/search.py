@@ -216,9 +216,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 if child.state not in explored_nodes:
                     frontier.update(node.Node(child.state, current_node, child.action, current_node.path_cost), problem.getCostOfActions(child.path()) + heuristic(child.state, problem))
 
-
     util.raiseNotDefined()
-
 
 # Abbreviations
 bfs = breadthFirstSearch
