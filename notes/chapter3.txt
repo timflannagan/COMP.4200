@@ -1,0 +1,7 @@
+Lecture #10:
+- Exam covers:
+  • Search
+  • Constraint satisfaction
+  • Adversarial search
+  • Propositional logic
+  • CSP
