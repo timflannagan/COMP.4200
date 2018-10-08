@@ -10,3 +10,40 @@ and return that solution, whereas uniform-cost search will continue examining
 nodes to see if one has a lower path cost.
 1b.) Depth-first Search is a special case of best-first tree search.
 1c.) Uniform-cost Search is a special case of A*.
+
+
+4.) Uniform Cost Search using priority queue.
+a.) What path is returned by the algorithm:
+Arad -> Sibiu -> Râmnicu Vâlcea -> Pitești -> Bucharest -> Giurgiu
+b.) Path cost: 140 + 80 + 97 + 101 + 90 = 508
+c.) I found it interesting how the visited nodes set closely resembled the set
+of visited nodes that would be produced from breadth-first search.
+
+7. Write the sequence of nodes in the order visited by the specific methods.
+a.) Depth-First Search:
+  Solution's Path: S->A->C->H->E->B->D->F->J->K->G
+b.) Breadth-First Search:
+  1: S -> [A, B]
+  2: A -> [B, C]
+  3: B -> [C, D, E]
+  4: C -> [D, E, H]
+  5: D -> [E, H, F, I]
+  6: E -> [H, F, I]
+  7: H -> [F, I, G]
+  8: F -> [I, G, J]
+  9: I -> [G, J]
+  10: G -> Goal state reached
+
+  Solution's path: S->A->B->C->D->E->H->F->I->H
+c.) A* search.
+Note: the transition cost is 1; uses f(s) = g(s) + h(s)
+
+  1. S -> [A3, B3]
+  2. A -> [B3, C3]
+  3. B -> [C3, D4, E4]
+  4. C -> [D4, E4, H4]
+  5. D -> [E4, H4, F6, I4]
+  6. E -> [H4, F6, I4, G4]
+  7. G -> Goal state reached
+
+  Solution's path: S->A->C->H->G

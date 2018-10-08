@@ -46,7 +46,7 @@ Informed Search Algorithms:
   • Best-first tree search includes depth-first search as a special case.
   • Most best-first algorithms include a component of f a heuristic function,
     denoted h(n). h(n) = estimated cost of the cheapest path from the state at node n to a goal state.
-    
+  •
 
 Properties of Search Algorithms:
 - Complete: whether a solution will be found, if a goal state exists.
