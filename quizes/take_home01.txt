@@ -1,0 +1,12 @@
+
+Name: Tim Flannagan
+Date: 10/08/18
+
+1a.) Breadth-First Search is a special case of uniform-cost search.
+True. If all the step costs are equal, then breadth-first search is very
+similar to uniform-cost search. One of the main differences here is that
+once a goal state is generated, breadth-first search will terminate its search,
+and return that solution, whereas uniform-cost search will continue examining
+nodes to see if one has a lower path cost.
+1b.) Depth-first Search is a special case of best-first tree search.
+1c.) Uniform-cost Search is a special case of A*.

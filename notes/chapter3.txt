@@ -5,3 +5,51 @@ Lecture #10:
   • Adversarial search
   • Propositional logic
   • CSP
+
+Uninformed Search Algorithms:
+- No additional information about states beyond that provided in the problem definition.
+- Breadth-First Search:
+   • Complete, but may no be optimal.
+     - When all step-costs are equal, BFS is optimal as it expands the shallowest
+       unexplored node.
+   • Usually implemented using FIFO data structure.
+   • Provides the shortest path to the solution.
+   • Disadvantage: consumes a lot of memory space since each level of nodes
+     is saved for creating the next one. Requires O(b^d)
+- Depth-First Search:
+   • Usually implemented in recursion using a LIFO stack data structure.
+   • The space requirement to store nodes is linear. Storage space is b * m
+     - Where b is the branching factor, m is the depth.
+   • The graph-search implementation is complete in a finite space, whereas the
+     tree-search implementation is not complete; both versions are non-optimal.
+   • Only real advantage is the space complexity.
+   • Disadvantage: may go on infinitely on one path.
+- Uniform-Cost Search:
+   • Idea: expand the lowest cost node, where g(n) denoted the path cost.
+   • Stored as priority queue.
+   • Goal test is applied to a node when it SELECTED for expansion, rather than
+     BFS, as that's when it is first generated.
+     - The first goal node that is generated may be on a suboptimal path.
+   • UFC only cares about the total path cost, not the number of total paths taken.
+   • When all step costs are equal, than UCS is similar to BFS
+     - UCS examines all the nodes at the goal's depth to see if one has a lower cost
+     - BFS stops as soon as it generates a goal state.
+   • Disadvantage: can be multiple long paths with the cost <= C*, and uniform
+     cost search must explore them all.
+
+Informed Search Algorithms:
+- Best-first Search:
+  • Instance of the general tree-search or graph-search algorithm in which a node
+    is selected for expansion based on an evaluation function f(n).
+  • The implementation of best-first search is identical to UCS except for the
+    use of f instead of g to order the priority queue.
+  • Best-first tree search includes depth-first search as a special case.
+  • Most best-first algorithms include a component of f a heuristic function,
+    denoted h(n). h(n) = estimated cost of the cheapest path from the state at node n to a goal state.
+    
+
+Properties of Search Algorithms:
+- Complete: whether a solution will be found, if a goal state exists.
+- Optimal: solution has the lowest path cost among all solutions.
+- Time complexity
+- Space complexity
