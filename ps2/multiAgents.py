@@ -1,15 +1,15 @@
 # multiAgents.py
 # --------------
-# Licensing Information:  You are free to use or extend these projects for 
-# educational purposes provided that (1) you do not distribute or publish 
-# solutions, (2) you retain this notice, and (3) you provide clear 
-# attribution to UC Berkeley, including a link to 
+# Licensing Information:  You are free to use or extend these projects for
+# educational purposes provided that (1) you do not distribute or publish
+# solutions, (2) you retain this notice, and (3) you provide clear
+# attribution to UC Berkeley, including a link to
 # http://inst.eecs.berkeley.edu/~cs188/pacman/pacman.html
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
-# The core projects and autograders were primarily created by John DeNero 
+# The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
-# Student side autograding was added by Brad Miller, Nick Hay, and 
+# Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
@@ -69,12 +69,48 @@ class ReflexAgent(Agent):
         """
         # Useful information you can extract from a GameState (pacman.py)
         successorGameState = currentGameState.generatePacmanSuccessor(action)
+
+        # Extract information from the GameState (initially not used in starter code)
         newPos = successorGameState.getPacmanPosition()
         newFood = successorGameState.getFood()
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
-
         "*** YOUR CODE HERE ***"
+
+        calculated_score = None
+
+        if calculated_score and calculated_score > successorGameState.getScore():
+            return calculated_score
+
+        # the idea is going towards the food that's the farthest away from the ghost
+        # this could potentially be an inefficient way to handle this
+        # the ghost agent could also just chill next to the remaining food
+
+        # newPos is a tuple (x, y)
+        # print('New position: ', newPos)
+
+
+        # print('Beginning of list: ')
+        # for (x, y) in newFood.asList():
+        #     print x, y
+        # print('End of list')
+
+        # this is a list of tuples (x, y) that contain food items
+        # print('Food remaining: ', newFood.asList())
+        # print('Ghost States: ', newGhostStates)
+
+        # newScaredTimes is initialized to [0]
+        # if len(newScaredTimes) is not 1:
+        # possibly attack the ghost or continue getting uncontested food
+
+        # print('Moves ghosts will remain scared: ', len(newScaredTimes))
+
+
+
+        for action in newGhostStates:
+            print action.getPosition()
+
+
         return successorGameState.getScore()
 
 def scoreEvaluationFunction(currentGameState):
@@ -171,4 +207,3 @@ def betterEvaluationFunction(currentGameState):
 
 # Abbreviation
 better = betterEvaluationFunction
-
