@@ -36,6 +36,10 @@ Uninformed Search Algorithms:
      - BFS stops as soon as it generates a goal state.
    • Disadvantage: can be multiple long paths with the cost <= C*, and uniform
      cost search must explore them all.
+- Bi-directional Search: run two simultaneous searches
+   • The goal state here would be to check if the two frontiers intersect.
+   • The solution may not be optimal, even if both searches use BFS.
+   • The motivation is that b^d/2 + b^d/2 is less than b^d.
 
 Informed Search Algorithms:
 - Best-first Search:
