@@ -202,6 +202,7 @@ class PriorityQueue:
         # If item already in priority queue with higher priority, update its priority and rebuild the heap.
         # If item already in priority queue with equal or lower priority, do nothing.
         # If item not in priority queue, do the same thing as self.push.
+
         for index, (p, c, i) in enumerate(self.heap):
             if i == item:
                 if p <= priority:

@@ -288,10 +288,14 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
+<<<<<<< HEAD
         food = startingGameState.getFood()
         for x, y in self.corners:
             food[x][y] = True
         self.start = (self.startingPosition, food)
+=======
+        visited_nodes = [{}]
+>>>>>>> Add PS2/
 
     def getStartState(self):
         """
@@ -299,7 +303,11 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
+<<<<<<< HEAD
         return self.start
+=======
+        return self.startingPosition
+>>>>>>> Add PS2/
 
         util.raiseNotDefined()
 
@@ -340,11 +348,21 @@ class CornersProblem(search.SearchProblem):
 
             # check if we are hitting a walls
             if not self.walls[nextx][nexty]:
+<<<<<<< HEAD
                 # get the next state, set cost for tuple
                 nextState = (nextx, nexty)
                 cost = 1
                 corners[nextx][nexty] = False
                 successors.append((nextState, corners), action, cost)
+=======
+                nextState = (nextx, nexty)
+                cost = 1
+
+                # if (nextx, nexty) in self.corners:
+
+
+                successors.append( ( nextState, action, cost) )
+>>>>>>> Add PS2/
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -387,8 +405,11 @@ def cornersHeuristic(state, problem):
     state[1] = y
     '''
 
+<<<<<<< HEAD
     # get state
 
+=======
+>>>>>>> Add PS2/
     return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
