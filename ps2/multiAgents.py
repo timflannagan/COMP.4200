@@ -102,7 +102,7 @@ class ReflexAgent(Agent):
         if (closest_food < 1):
             calculated_score += 35
         elif (closest_food < 5):
-            calculated_score += 20
+            calculated_score += 25
         else:
             calculated_score += 10
 
@@ -111,75 +111,12 @@ class ReflexAgent(Agent):
             calculated_score -= 20
 
         # discourage going to the same location as the ghost
-        if (newPos[0] == newGhostStates[0].getPosition()):
+        if (newPos[0] == newGhostStates[0].getPosition() and action == newGhostStates[0].getDirection()):
             calculated_score -= 50
+        elif (newPos[0] == newGhostStates[0].getPosition()):
+            calculated_score -= 30
 
         return calculated_score + successorGameState.getScore()
-
-        # check if current game state is a win, and return aribtrary amount
-        # if currentGameState.isWin():
-        #     return 500
-        #
-        # # print(currentGameState.getCapsules())
-        #
-        # # current problems: pacman just stops so lets discourage that
-        # # pacman doesn't know what to do when its pretty hard away from food
-        # # if just returning calculated_score, pacman often doesn't win, return that + .getScore()
-        # # pacman will just repeat the same moves if stuck in corner
-        #
-        # closest_food_location = None
-        # lowest_dist_to_cap = None
-        # closest_food = None
-        #
-        # # determine the closest food from the list of food location
-        # for food in newFood.asList():
-        #     distance_to_food = abs(newPos[0] - food[0]) + abs(newPos[1] - food[1])
-        #
-        #     if not closest_food:
-        #         closest_food_location = food
-        #         closest_food = distance_to_food
-        #
-        #     elif (distance_to_food < closest_food):
-        #         closest_food_location = food
-        #         closest_food = distance_to_food
-        #
-        # # determine the distance from the ghost and the new pacman position
-        # ghost_dist = util.manhattanDistance(newPos, newGhostStates[0].getPosition())
-        #
-        # # encourage getting the closest food
-        #
-        # if (successorGameState.getCapsules()):
-        #     for capsule in successorGameState.getCapsules():
-        #         dist_to_cap = util.manhattanDistance(newPos, capsule)
-        #
-        #         if not lowest_dist_to_cap:
-        #             lowest_dist_to_cap = dist_to_cap
-        #         elif dist_to_cap < lowest_dist_to_cap:
-        #             lowest_dist_to_cap = dist_to_cap
-        #
-        # # if ((lowest_dist_to_cap and lowest_dist_to_cap < 3) or closest_food > 3):
-        # #     calculated_score += 60
-        # if (closest_food < 1):
-        #     calculated_score += 50
-        # elif (closest_food < 3):
-        #     calculated_score += 45
-        # elif (closest_food < 5):
-        #     calculated_score += 40
-        # elif (closest_food < 10):
-        #     calculated_score += 35
-        # else:
-        #     calculated_score += 30
-        #
-        # # discourage stopping
-        # if action == Directions.STOP:
-        #     calculated_score -= 20
-        #
-        # # get the current position of the ghost
-        # current_ghost_pos = newGhostStates[0].getPosition()
-        #
-        # # discourage going to the same location as the ghost
-        # if (newPos == current_ghost_pos and action == newGhostStates[0].getDirection()):
-        #     calculated_score -= 25
 
 def scoreEvaluationFunction(currentGameState):
     """
@@ -234,7 +171,19 @@ class MinimaxAgent(MultiAgentSearchAgent):
             Returns the total number of agents in the game
         """
         "*** YOUR CODE HERE ***"
-        print(gameState,getNumAgents())
+        # Collect legal moves and successor states
+        legalMoves = gameState.getLegalActions()
+
+        # # Choose one of the best actions
+        # scores = [self.evaluationFunction(gameState) for action in legalMoves]
+        # bestScore = max(scores)
+        # bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
+        # chosenIndex = random.choice(bestIndices) # Pick randomly among the best
+
+        "Add more of your code here if you want to"
+        # num = random.choice(1)
+
+        return legalMoves[num]
 
         util.raiseNotDefined()
 
