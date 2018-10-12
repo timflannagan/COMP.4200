@@ -77,39 +77,61 @@ class ReflexAgent(Agent):
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
         "*** YOUR CODE HERE ***"
 
-        calculated_score = None
+        """
+        Things to keep track of:
+        1. Closest food should be rewarded the most
+        2. How close the ghost actually is
+        3. If pacman is in a terminal-state
+        """
 
-        if calculated_score and calculated_score > successorGameState.getScore():
-            return calculated_score
+        score_dict = { 'food': 50, 'closest_food': 100, 'ghost': -50 }
+        calculated_score = 0
+        closest_food = None
 
-        # the idea is going towards the food that's the farthest away from the ghost
-        # this could potentially be an inefficient way to handle this
-        # the ghost agent could also just chill next to the remaining food
+        if currentGameState.isWin():
+            print('this ran')
+            return 500
 
-        # newPos is a tuple (x, y)
-        # print('New position: ', newPos)
+        # current problems: pacman just stops so lets discourage that
+        # pacman doesn't know what to do when
+
+        for food in newFood.asList():
+            distance_to_food = abs(newPos[0] - food[0]) + abs(newPos[1] - food[1])
+
+            if not closest_food:
+                closest_food = distance_to_food
+            elif (distance_to_food < closest_food):
+                closest_food = distance_to_food
+
+        # ghost_dict = newGhostStates[0]
+        print(newGhostStates[0].getPosition())
+        ghost_dist = util.manhattanDistance(newPos, newGhostStates[0].getPosition())
+
+        if (closest_food < 1):
+            calculated_score += 30
+        elif (closest_food < 5):
+            calculated_score += 20
+        else:
+            calculated_score += 10
+
+        # discourage stopping
+        if action == Directions.STOP:
+            calculated_score -= 20
+
+        current_ghost_pos = newGhostStates[0].getPosition()
+
+        # discourage going to the same location as the ghost
+        if (newPos[0] == current_ghost_pos):
+            calculated_score -= 50
+
+        # this should be good
+        # if (closest_food < current_ghost_pos):
+        #     calculated_score += 25
+
+        # if ()
 
 
-        # print('Beginning of list: ')
-        # for (x, y) in newFood.asList():
-        #     print x, y
-        # print('End of list')
-
-        # this is a list of tuples (x, y) that contain food items
-        # print('Food remaining: ', newFood.asList())
-        # print('Ghost States: ', newGhostStates)
-
-        # newScaredTimes is initialized to [0]
-        # if len(newScaredTimes) is not 1:
-        # possibly attack the ghost or continue getting uncontested food
-
-        # print('Moves ghosts will remain scared: ', len(newScaredTimes))
-
-
-
-        for action in newGhostStates:
-            print action.getPosition()
-
+        return calculated_score + successorGameState.getScore()
 
         return successorGameState.getScore()
 
@@ -166,6 +188,8 @@ class MinimaxAgent(MultiAgentSearchAgent):
             Returns the total number of agents in the game
         """
         "*** YOUR CODE HERE ***"
+        print(gameState,getNumAgents())
+
         util.raiseNotDefined()
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
