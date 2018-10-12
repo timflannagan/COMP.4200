@@ -78,23 +78,18 @@ class ReflexAgent(Agent):
         "*** YOUR CODE HERE ***"
 
         """
-        Things to keep track of:
-        1. Closest food should be rewarded the most
-        2. How close the ghost actually is
-        3. If pacman is in a terminal-state
+        Current problems/To-Do:
+        [x] pacman constantly stopping in-place
+        [ ] implement capsules
+        [ ] stop pacman bounces around in the same spot when food is near walls
+        [ ] discourage going opposite direction from far away food
+        [ ] fix returning only calculated_score without constantly losing
         """
 
-        score_dict = { 'food': 50, 'closest_food': 100, 'ghost': -50 }
         calculated_score = 0
         closest_food = None
 
-        if currentGameState.isWin():
-            print('this ran')
-            return 500
-
-        # current problems: pacman just stops so lets discourage that
-        # pacman doesn't know what to do when
-
+        # iterate through the list of food to determine the closest food position
         for food in newFood.asList():
             distance_to_food = abs(newPos[0] - food[0]) + abs(newPos[1] - food[1])
 
@@ -103,37 +98,88 @@ class ReflexAgent(Agent):
             elif (distance_to_food < closest_food):
                 closest_food = distance_to_food
 
-        # ghost_dict = newGhostStates[0]
-        print(newGhostStates[0].getPosition())
-        ghost_dist = util.manhattanDistance(newPos, newGhostStates[0].getPosition())
-
+        # play around with weights
         if (closest_food < 1):
-            calculated_score += 30
+            calculated_score += 35
         elif (closest_food < 5):
             calculated_score += 20
         else:
             calculated_score += 10
 
-        # discourage stopping
+        # had a problem where pacman would constantly stop in place
         if action == Directions.STOP:
             calculated_score -= 20
 
-        current_ghost_pos = newGhostStates[0].getPosition()
-
         # discourage going to the same location as the ghost
-        if (newPos[0] == current_ghost_pos):
+        if (newPos[0] == newGhostStates[0].getPosition()):
             calculated_score -= 50
-
-        # this should be good
-        # if (closest_food < current_ghost_pos):
-        #     calculated_score += 25
-
-        # if ()
-
 
         return calculated_score + successorGameState.getScore()
 
-        return successorGameState.getScore()
+        # check if current game state is a win, and return aribtrary amount
+        # if currentGameState.isWin():
+        #     return 500
+        #
+        # # print(currentGameState.getCapsules())
+        #
+        # # current problems: pacman just stops so lets discourage that
+        # # pacman doesn't know what to do when its pretty hard away from food
+        # # if just returning calculated_score, pacman often doesn't win, return that + .getScore()
+        # # pacman will just repeat the same moves if stuck in corner
+        #
+        # closest_food_location = None
+        # lowest_dist_to_cap = None
+        # closest_food = None
+        #
+        # # determine the closest food from the list of food location
+        # for food in newFood.asList():
+        #     distance_to_food = abs(newPos[0] - food[0]) + abs(newPos[1] - food[1])
+        #
+        #     if not closest_food:
+        #         closest_food_location = food
+        #         closest_food = distance_to_food
+        #
+        #     elif (distance_to_food < closest_food):
+        #         closest_food_location = food
+        #         closest_food = distance_to_food
+        #
+        # # determine the distance from the ghost and the new pacman position
+        # ghost_dist = util.manhattanDistance(newPos, newGhostStates[0].getPosition())
+        #
+        # # encourage getting the closest food
+        #
+        # if (successorGameState.getCapsules()):
+        #     for capsule in successorGameState.getCapsules():
+        #         dist_to_cap = util.manhattanDistance(newPos, capsule)
+        #
+        #         if not lowest_dist_to_cap:
+        #             lowest_dist_to_cap = dist_to_cap
+        #         elif dist_to_cap < lowest_dist_to_cap:
+        #             lowest_dist_to_cap = dist_to_cap
+        #
+        # # if ((lowest_dist_to_cap and lowest_dist_to_cap < 3) or closest_food > 3):
+        # #     calculated_score += 60
+        # if (closest_food < 1):
+        #     calculated_score += 50
+        # elif (closest_food < 3):
+        #     calculated_score += 45
+        # elif (closest_food < 5):
+        #     calculated_score += 40
+        # elif (closest_food < 10):
+        #     calculated_score += 35
+        # else:
+        #     calculated_score += 30
+        #
+        # # discourage stopping
+        # if action == Directions.STOP:
+        #     calculated_score -= 20
+        #
+        # # get the current position of the ghost
+        # current_ghost_pos = newGhostStates[0].getPosition()
+        #
+        # # discourage going to the same location as the ghost
+        # if (newPos == current_ghost_pos and action == newGhostStates[0].getDirection()):
+        #     calculated_score -= 25
 
 def scoreEvaluationFunction(currentGameState):
     """
