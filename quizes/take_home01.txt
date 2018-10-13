@@ -11,6 +11,10 @@ nodes to see if one has a lower path cost.
 1b.) Depth-first Search is a special case of best-first tree search.
 1c.) Uniform-cost Search is a special case of A*.
 
+2.) Decide whether the following statements are true of false.
+a.) Bi-directional BFS is always faster than BFS when B >= 2 and L >= 4.
+False. While bi-directional BFS may have a faster time complexity, it still
+needs to search two trees 
 
 4.) Uniform Cost Search using priority queue.
 a.) What path is returned by the algorithm:

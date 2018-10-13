@@ -1,0 +1,19 @@
+1. Arad - [SIBUI: 339, TIM: 447, ZER: 449]
+2. SIBUI - [TIM: 447, ZER: 449, RV: 413, FAG: 415]
+3. RV - [FAG: 415, TIM: 447, ZER: 449, PIT: 417, CRAIV: 526]
+4. FAG - [PIT: 417, TIM: 447, ZER: 449, CRAIV(RV): 526, BUCF: 450]
+5. PIT - [BUC(P): 415, TIM: 447, ZER: 449, CRAIV(RV): 526]
+6. BUC(P) - [TIM: 447, ZER: 449, CRAIV(RV): 526, GIU(P): 582, URZ(P): 580]
+7. TIM - [ZER: 449, LUJ: 473, CRA(RV): 526, URZ(P): 580, GIU(P): 582]
+8. ZER - [LUJ: 473, CRA(RV): 526, ORA: 526, URZ(P): 580, GIU(P): 582]
+9. LUJ - [CRARV: 526, ORA: 526, MEH: 540, URZP: 580, GIUP: 582]
+10. CRARV - [ORA: 526, MEH: 540, URZP: 580, GIUP: 582, DRO: 728]
+11. ORA - [MEH: 540, UZRP: 580, GIUP: 582, DRO(CRA): 728]
+12. MEH - [URZP: 580, GIUP: 582, DRO(MEH): 616]
+13. URZP - [GIUP: 582, DRO(MEH): 616, HIR: 752, VAS: 844]
+14. GIUP - Goal state reached
+
+Used the uniform-cost search algorithm in the book to complete this question:
+a.) Path returned: Arad -> Sibui -> Rimnicu Vilcea -> Pitesi -> Bucharest -> Giurgiu
+b.) The path cost was 582
+c.) I thought it was interesting that
