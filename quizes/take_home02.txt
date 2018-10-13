@@ -1,0 +1,15 @@
+Name: Tim Flannagan
+Date: 10/13/18
+
+1.) Adversarial Search
+a.) Draw the entire search space for nim
+
+# Assume that 6:1, 4:3, 5:2 is the same as the opposite list
+List of invalid moves:
+invalid = [ (1, 3, 3), (1, 1, 5), (2, 2, 3), (1, 1, 2, 2), (1, 1, 1, 4)]
+
+
+1. 7 -> [(1, 6), (2, 5), (3, 4)]
+2. 7 -> [ [(1, 1, 5), (1, 2, 4)], [(1, 2, 4), (2, 2, 3)], [(1, 2, 4), (1, 3, 3)] ]
+3. 7 -> [ (1, 1, 1, 4), (1, 2, 4), (1, 1, 2, 3), (2, 2, 3), (1, 3, 3), (2, 2, 3), (1, 2, 2, 2)]
+4. 7 -> [ (1, 1, 1, 1, 3), (1, 1, 1, 2, 2) ]
