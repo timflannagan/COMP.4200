@@ -1,0 +1,46 @@
+Propositional Logic:
+1. Portions of the world must be represented in a KNOWLEDGE BASE, or KG
+   • A KB is composed of sentences in a language with logic.
+   • Interact with a KB using ASK and TELL functions:
+     - Examples:
+       1. ASK(KB, a): yes       # exactly when a follows from the KB
+       2. TELL(KB, a): KB'      # so that a follows from KB'
+       3. FORGET(KB, A) = KB'   # non-monotonic (will not be discussed)
+2. There are three distinguishable levels to representing knowledge:
+   a. The knowledge level: an abstraction to a KB. Concerns the total knowledge.
+   b. The logical level: encoding of knowledge in a formal language.
+   c. The implementation level: the internal representation of the sentences.
+3. Bringing it together:
+   • A knowledge-based agent uses its KB for the following purposes:
+     a. Represent its background knowledge
+     b. Store its observations
+     c. Store its executed actions
+     d. Derive actions
+4. The Wumpus World:
+   • Grid layout is 4x4.
+   • The agent perceives a STENCH when the square containing the wumpus is
+     directly in adjacent squares.
+   • The agent perceives a BREEZE in squares that are adjacent to a pit.
+   • The agent perceives a GLITTER in the square that contains gold.
+   • The agent perceives a BUMP when the agent walks into a wall.
+   • When wumpus is KILLED, the scream is HEARD throughout the board.
+   • We reperesent all these perceptions using a five-tuple:
+     - Percepts = (stench, breeze, glitter, none, none)
+       • The agent can perceive a stench, breeze, and glitter at the same time.
+       • The agent CANNOT perceive its own location.
+   • Actions:
+     1. Go forward.
+     2. Turn right by 90 degrees.
+     3. Turn left by 90 degrees.
+     4. Grab: pick up an object in the same square.
+     5. Shoot: there is only one arrow.
+     6. Leave: only works in the square [1, 1] to leave the cave.
+   • Goal of game: find the gold and leave the cave.
+5. Declarative Languages:
+   • Must be able to express knowledge before a system capable of LEARNING,
+     THINKING, PLANNING, EXPLAINING, can be build.
+   • Declarative: system believes P iff it considers P to be TRUE
+   • Precise: we must know the following -
+     - Which symbols represent sentences.
+     - What it means for a sentence to be true.
+     - When a sentence follows from other sentences.

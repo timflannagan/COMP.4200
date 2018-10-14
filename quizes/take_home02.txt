@@ -13,3 +13,40 @@ invalid = [ (1, 3, 3), (1, 1, 5), (2, 2, 3), (1, 1, 2, 2), (1, 1, 1, 4)]
 2. 7 -> [ [(1, 1, 5), (1, 2, 4)], [(1, 2, 4), (2, 2, 3)], [(1, 2, 4), (1, 3, 3)] ]
 3. 7 -> [ (1, 1, 1, 4), (1, 2, 4), (1, 1, 2, 3), (2, 2, 3), (1, 3, 3), (2, 2, 3), (1, 2, 2, 2)]
 4. 7 -> [ (1, 1, 1, 1, 3), (1, 1, 1, 2, 2) ]
+
+1d.) Alpha-beta pruning:
+Notes:
+- For max:
+a. compute v' value
+b. update v if v' > v
+c. if v' >= beta value: prune
+d. if v' > alpha value, update alpha = v;
+e. return v
+
+- For min:
+a. compute v' value
+b. update v if v' < v
+c. if v' <= alpha: prune
+d. if v' < beta, b = v'
+e. return v
+
+1.) State A: a = -inf, b = inf
+2.) State B: a = -inf, b = inf
+3.) State D: a = -inf, b = inf
+4.) State H: a = 6, b = inf
+5.) State D: a = 6, b = inf
+6.) State B: a = -inf, b = 6
+7.) State E: a = -inf, b = 6
+8.) State J: a = 8, b = 6
+9.) State E:
+
+2.)
+a.) Show how the following crossover opeators work:
+p1 = [A, B, C, D, E, F, G, H, U, J]
+p2 = [E, F, J, H, B, C, I, A, D, G]
+prob [1, 0, 1, 1, 0, 0, 0, 1, 0, 1]
+
+a1) Uniform crossover
+child1 = [E, B, J, H, E, F, G, A, I, G]
+child2 = [A, F, C, D, B, C, I, H, D, J]
+a2.) Order-based crossover

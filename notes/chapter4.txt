@@ -1,0 +1,20 @@
+Crossover Operators:
+1. One point crossover: a random crossover point is chosen, and the tails of its
+   two parents are swapped to get new off-springs.
+
+   lst1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+   lst2 = [5, 8, 9, 4, 2, 3, 5, 7, 5, 8]
+
+   crossover_index = 4
+
+   lst3 = lst1[0:4] + lst2[0: 4]
+   lst4 = lst1[4: ] + lst2[4: ]
+
+   new_lists = [0, 1, 2, 3, 4, 3, 5, 7, 5, 8], [5, 8, 9, 4, 2, 5, 6, 7, 8, 9]
+
+2. Multi-point Crossover: generalization of one-point crossover wherein alternating
+   segments are swapped to get new off-springs.
+3. Uniform Crossover: don't divide the chromosome into segments, but rather treat
+   each gene separately. Essentially flipping a coin for each chromosome to decide
+   whether or not it'll be included in the off-spring. We can also bias the coin to
+   one parent, to have more genetic material in the child from that parent.

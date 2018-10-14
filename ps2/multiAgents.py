@@ -80,6 +80,8 @@ class ReflexAgent(Agent):
         """
         Current problems/To-Do:
         [x] pacman constantly stopping in-place
+        [x] use manhattanDistance instead of manual abs
+        [ ] implement linear evaluation function
         [ ] implement capsules
         [ ] stop pacman bounces around in the same spot when food is near walls
         [ ] discourage going opposite direction from far away food
@@ -171,19 +173,33 @@ class MinimaxAgent(MultiAgentSearchAgent):
             Returns the total number of agents in the game
         """
         "*** YOUR CODE HERE ***"
-        # Collect legal moves and successor states
-        legalMoves = gameState.getLegalActions()
 
-        # # Choose one of the best actions
-        # scores = [self.evaluationFunction(gameState) for action in legalMoves]
-        # bestScore = max(scores)
-        # bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
-        # chosenIndex = random.choice(bestIndices) # Pick randomly among the best
+        def min_value(state, action):
+            # check if state is a terminal-state
+            if (state.isWin() or state.isLose()):
+                print('true')
 
-        "Add more of your code here if you want to"
-        # num = random.choice(1)
+            return 0
 
-        return legalMoves[num]
+        # we want to get the available moves
+        available_moves = gameState.getLegalActions()
+
+        # define helper variables; we want to track the best move and best score
+        best_move = None
+        best_score = float("-inf")
+
+        # iterate throughout the available moves
+        for move in available_moves:
+            successor_state = gameState.generateSuccessor(0, move)
+
+            successor_score = min_value(successor_state, move)
+            print('Currently in depth:', self.depth)
+
+            if successor_score > best_score:
+                best_move = move
+                best_score = successor_score
+
+        return best_move
 
         util.raiseNotDefined()
 
