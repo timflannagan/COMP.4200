@@ -44,3 +44,20 @@ Propositional Logic:
      - Which symbols represent sentences.
      - What it means for a sentence to be true.
      - When a sentence follows from other sentences.
+6. Basics of Propositional Logic:
+   • Propositions: the building blocks are indivisible, atomic statements.
+   • Logical connectives (and, or, not) are used to build FORMULAE.
+   • Interested in finding the following:
+     a. When is a proposition true?
+     b. When does a proposition follow from a KB?
+        - Symbolically: KB |= a
+     c. Can we define the concept of DERIVATION.
+        - Symbolically: KB |- a
+     - This is the meaning and implementation of ASK.
+   • Logical formulae:
+     - Atomic formulae, falseness, truth, negation, conjunction, disjunction,
+       implication, and equivalence.
+     - Order precedence:
+       • atom (atomic formula) > literal (atomic formula) > clause (disjunction of literals).
+   • The KB can be thought of as a SET of sentences or a SINGLE sentence that ASSERTS ALL the
+     individual sentences. 
