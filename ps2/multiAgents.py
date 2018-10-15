@@ -179,55 +179,100 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Note: should use self.depth, self.evaluationFunction
         """
 
-        def min_play(game_state):
-            if game_state.isWin() or game_state.isLose():
-                return game_state.getScore()
+        def min_value(game_state, agent_index):
+            # check if state is terminal
+            if game_state.isWin() or game_state.isLose() or self.depth == 0:
+                return self.evaluationFunction(game_state)
 
-            moves = game_state.getLegalActions()
-            best_score = float("inf")
+            # assign the value to be the worst possible case for MIN
+            v = float('inf')
+            best_move = None
+            # print('>> Min from driver: {}'.format(game_state.state))
+            #
+            # print('Min was passed index {}\n'.format(agent_index))
 
-            for move in moves:
-                clone = game_state.generateSuccessor(0, move)
-                score = max_play(clone)
+            for move in game_state.getLegalActions(agent_index):
+                # print('MIN: Currently looking at {} in min: '.format(move))
+                # print('MIN: Current agent index {}'.format(agent_index))
+                current_successor = game_state.generateSuccessor(agent_index, move)
+                # print('min: {}'.format(current_successor.state))
+                current_score = max_value(current_successor, agent_index + 1)
 
-                if score < best_score:
+                if not best_move:
                     best_move = move
-                    best_score = score
-            return best_score
 
-        def max_play(game_state):
-            if game_state.isWin() or game_state.isLose():
-                return game_state.getScore()
+                # print('MIN: Current v is {}'.format(v))
 
-            moves = game_state.getLegalActions()
-            best_score = float("-inf")
-
-            for move in moves:
-                clone = game_state.generateSuccessor(0, move)
-                score = min_play(clone)
-
-                if score > best_score:
+                # check if there's a smaller value returned from MAX
+                if current_score < v:
+                    # print("MIN: Update min v ({}) with {}".format(v, current_score))
+                    v = current_score
                     best_move = move
-                    best_score = score
-            return best_score
 
-        # minimax algorithm
-        moves = gameState.getLegalActions()
-        best_move = moves[0]
-        best_score = float('-inf')
-        # print('Number of agents: ', gameState.getNumAgents())
+            # print('MIN: Returning V: {}'.format(v))
+            return v
 
-        for move in moves:
-            clone = gameState.generateSuccessor(0, move)
-            score = min_play(clone)
+        def max_value(game_state, agent_index):
+            # check if state is terminal
+            if game_state.isWin() or game_state.isLose() or self.depth == 0:
+                return self.evaluationFunction(game_state)
 
-            if score > best_score:
+            # assign the value to be the worst possible case for MAX
+            v = float('-inf')
+            best_move = None
+
+            # print('Max was passed index {}\n'.format(agent_index))
+            # print('Max was passed the legal moves: {}'.format(game_state.getLegalActions()))
+            # print('Max Current depth {}'.format(self.depth))
+
+
+            for move in game_state.getLegalActions():
+                # print('>> Currently looking at {} in max: '.format(move))
+                # print('>> Current agent {}'.format(agent_index))
+
+                current_successor = game_state.generateSuccessor(0, move)
+                # print('max: {}'.format(current_successor.state))
+                current_score = min_value(current_successor, agent_index + 1)
+
+                if not best_move:
+                    best_move = move
+
+                if current_score > v:
+                    # print("Update max v ({}) with {}".format(v, current_score))
+                    v = current_score
+                    best_move = move
+
+            return v
+
+        """ We want to find the maximum scored state return by MIN"""
+        available_moves = gameState.getLegalActions()
+        v = float("-inf")
+        best_move = available_moves[0]
+        # print('>>>>> Number of agents {}'.format(gameState.getNumAgents()))
+
+        # iterate throughout the list of available moves
+        for move in available_moves:
+            print('>>>> Before v: {}'.format(v))
+
+            current_successor = gameState.generateSuccessor(0, move)
+            print('DRIVER: {}'.format(current_successor.state))
+            current_score = min_value(current_successor, 1)
+
+            if current_score > v:
+                v = current_score
                 best_move = move
-                best_score = score
 
+            print('>>>> After v: {}'.format(v))
+
+
+        print('>> Returning {}'.format(best_move))
         return best_move
 
-        # get available moves
+
+
+
+        # start at depth 0 and pacman index (0)
+        # return minimax(gameState, 0, 0)
 
         util.raiseNotDefined()
 
