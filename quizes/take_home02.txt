@@ -40,8 +40,7 @@ e. return v
 8.) State J: a = 8, b = 6
 9.) State E:
 
-2.)
-a.) Show how the following crossover opeators work:
+2a.) Show how the following crossover opeators work:
 p1 = [A, B, C, D, E, F, G, H, U, J]
 p2 = [E, F, J, H, B, C, I, A, D, G]
 prob [1, 0, 1, 1, 0, 0, 0, 1, 0, 1]
@@ -50,3 +49,21 @@ a1) Uniform crossover
 child1 = [E, B, J, H, E, F, G, A, I, G]
 child2 = [A, F, C, D, B, C, I, H, D, J]
 a2.) Order-based crossover
+
+3. Propositional logic:
+Possible worlds:
+1. (None, None, None, None, None)
+2. (None, None, )
+3. (None, )
+4. (None, )
+5. (None, )
+6. (None, )
+7. (None, )
+8. (None, )
+9. (None, )
+10. (None, )
+11. (None, )
+12. (None, )
+13. (None, )
+14. (None, )
+15. (None, )

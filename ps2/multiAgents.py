@@ -174,32 +174,60 @@ class MinimaxAgent(MultiAgentSearchAgent):
         """
         "*** YOUR CODE HERE ***"
 
-        def min_value(state, action):
-            # check if state is a terminal-state
-            if (state.isWin() or state.isLose()):
-                print('true')
 
-            return 0
+        """
+        Note: should use self.depth, self.evaluationFunction
+        """
 
-        # we want to get the available moves
-        available_moves = gameState.getLegalActions()
+        def min_play(game_state):
+            if game_state.isWin() or game_state.isLose():
+                return game_state.getScore()
 
-        # define helper variables; we want to track the best move and best score
-        best_move = None
-        best_score = float("-inf")
+            moves = game_state.getLegalActions()
+            best_score = float("inf")
 
-        # iterate throughout the available moves
-        for move in available_moves:
-            successor_state = gameState.generateSuccessor(0, move)
+            for move in moves:
+                clone = game_state.generateSuccessor(0, move)
+                score = max_play(clone)
 
-            successor_score = min_value(successor_state, move)
-            print('Currently in depth:', self.depth)
+                if score < best_score:
+                    best_move = move
+                    best_score = score
+            return best_score
 
-            if successor_score > best_score:
+        def max_play(game_state):
+            if game_state.isWin() or game_state.isLose():
+                return game_state.getScore()
+
+            moves = game_state.getLegalActions()
+            best_score = float("-inf")
+
+            for move in moves:
+                clone = game_state.generateSuccessor(0, move)
+                score = min_play(clone)
+
+                if score > best_score:
+                    best_move = move
+                    best_score = score
+            return best_score
+
+        # minimax algorithm
+        moves = gameState.getLegalActions()
+        best_move = moves[0]
+        best_score = float('-inf')
+        # print('Number of agents: ', gameState.getNumAgents())
+
+        for move in moves:
+            clone = gameState.generateSuccessor(0, move)
+            score = min_play(clone)
+
+            if score > best_score:
                 best_move = move
-                best_score = successor_score
+                best_score = score
 
         return best_move
+
+        # get available moves
 
         util.raiseNotDefined()
 
