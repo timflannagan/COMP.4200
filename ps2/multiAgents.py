@@ -93,7 +93,7 @@ class ReflexAgent(Agent):
 
         # iterate through the list of food to determine the closest food position
         for food in newFood.asList():
-            distance_to_food = abs(newPos[0] - food[0]) + abs(newPos[1] - food[1])
+            distance_to_food = util.manhattanDistance(food, newPos)
 
             if not closest_food:
                 closest_food = distance_to_food
@@ -102,21 +102,24 @@ class ReflexAgent(Agent):
 
         # play around with weights
         if (closest_food < 1):
-            calculated_score += 35
+            if currentGameState.getNumFood() <= successorGameState.getNumFood():
+                calculated_score -= 100
+            else:
+                calculated_score += 50
         elif (closest_food < 5):
-            calculated_score += 25
+            calculated_score += 40
+        elif (closest_food < 8):
+            calculated_score += 35
         else:
-            calculated_score += 10
+            calculated_score += 20
 
         # had a problem where pacman would constantly stop in place
         if action == Directions.STOP:
             calculated_score -= 20
 
         # discourage going to the same location as the ghost
-        if (newPos[0] == newGhostStates[0].getPosition() and action == newGhostStates[0].getDirection()):
+        if (newPos == newGhostStates[0].getPosition() and action == newGhostStates[0].getDirection()):
             calculated_score -= 50
-        elif (newPos[0] == newGhostStates[0].getPosition()):
-            calculated_score -= 30
 
         return calculated_score + successorGameState.getScore()
 
@@ -173,106 +176,137 @@ class MinimaxAgent(MultiAgentSearchAgent):
             Returns the total number of agents in the game
         """
         "*** YOUR CODE HERE ***"
-
-
         """
         Note: should use self.depth, self.evaluationFunction
+        Current Problems/To-do:
+        1. Need to track depth so maximum depth isn't reached.
+           - This could probably be achieved by comparing the depth of the current
+             node with the initial depth: if (depth > self.depth): -> evaluate the state
+        2. Modify minimax to be modular so it can handle more than two agent
         """
+        # def minimax(game_state, depth, agent_index):
+        #     if depth == 0:
+        #         return self.evaluationFunction(game_state)
+        #
+        #     best_move = None
+        #     # print('Current agent index: {}'.format(agent_index))
+        #
+        #     # check if max node
+        #     if agent_index is 0:
+        #         v = float('-inf')
+        #
+        #         for move in game_state.getLegalActions():
+        #             successor = game_state.generateSuccessor(agent_index, move)
+        #             successor_value = minimax(successor, depth - 1, agent_index + 1)
+        #
+        #             if not best_move:
+        #                 best_move = move
+        #
+        #             if successor_value > v:
+        #                 # print('Max: Updating v: {} with {}'.format(v, successor_value))
+        #                 v = successor_value
+        #                 best_move = move
+        #         return v, best_move
+        #     else:
+        #         v = float('inf')
+        #
+        #         for move in game_state.getLegalActions():
+        #             successor = game_state.generateSuccessor(agent_index, move)
+        #             successor_value = minimax(successor, depth - 1, agent_index + 1)
+        #
+        #             if not best_move:
+        #                 best_move = move
+        #
+        #             if successor_value < v:
+        #                 # print('Min: Updating v: {} with {}'.format(v, successor_value))
+        #                 v = successor_value
+        #                 best_move = move
+        #         return v, best_move
+        #
+        #     # print('\t\tReturning v: {}, move: {}'.format(v, best_move))
+        #     return best_move
+        #
+        # return minimax(gameState, self.depth + 1, 1)[1]
+        #
+        # def minimax(current_state, depth, agent_index, agent_type=0):
+        #     """
+        #     Return: an valid, optimal move in gameState
+        #     Input:
+        #         gameState   -> [ object ] that tracks the current state of the game
+        #         depth       -> [ int ] that tracks the current depth of the game
+        #         agent_type  -> [ bool ] that tracks if agent is max(0), or min(1)
+        #     """
 
-        def min_value(game_state, agent_index):
-            # check if state is terminal
-            if game_state.isWin() or game_state.isLose() or self.depth == 0:
+
+        def min_value(game_state, agent_index, depth):
+            if game_state.isWin() or game_state.isLose() or depth > self.depth:
                 return self.evaluationFunction(game_state)
 
-            # assign the value to be the worst possible case for MIN
-            v = float('inf')
-            best_move = None
-            # print('>> Min from driver: {}'.format(game_state.state))
-            #
-            # print('Min was passed index {}\n'.format(agent_index))
+            available_min_moves = game_state.getLegalActions()
+            best_score = float('inf')
 
-            for move in game_state.getLegalActions(agent_index):
-                # print('MIN: Currently looking at {} in min: '.format(move))
-                # print('MIN: Current agent index {}'.format(agent_index))
-                current_successor = game_state.generateSuccessor(agent_index, move)
-                # print('min: {}'.format(current_successor.state))
-                current_score = max_value(current_successor, agent_index + 1)
+            for move in available_min_moves:
+                agent_type = (agent_index + 1) % game_state.getNumAgents()
+                # print('agent type in min: {}'.format(agent_type))
+                successor = game_state.generateSuccessor(1, move)
+                print('min successor: {}'.format(successor.state))
 
-                if not best_move:
-                    best_move = move
+                # print('*** in min with successor {}, and index: {}'.format(successor.state, agent_type))
 
-                # print('MIN: Current v is {}'.format(v))
+                successor_score = max_value(successor, agent_type, depth + 1)
+                # print('*** The successor {} returned a max score of {}'.format(successor.state, successor_score))
 
-                # check if there's a smaller value returned from MAX
-                if current_score < v:
-                    # print("MIN: Update min v ({}) with {}".format(v, current_score))
-                    v = current_score
-                    best_move = move
+                if successor_score < best_score:
+                    best_score = successor_score
+                    # best_move = move
 
-            # print('MIN: Returning V: {}'.format(v))
-            return v
+            print('returning {} from min'.format(best_score))
+            return best_score
 
-        def max_value(game_state, agent_index):
-            # check if state is terminal
-            if game_state.isWin() or game_state.isLose() or self.depth == 0:
+        def max_value(game_state, agent_index, depth):
+            if game_state.isWin() or game_state.isLose() or depth > self.depth:
                 return self.evaluationFunction(game_state)
 
-            # assign the value to be the worst possible case for MAX
-            v = float('-inf')
-            best_move = None
+            available_moves = game_state.getLegalActions()
+            best_score = float('-inf')
 
-            # print('Max was passed index {}\n'.format(agent_index))
-            # print('Max was passed the legal moves: {}'.format(game_state.getLegalActions()))
-            # print('Max Current depth {}'.format(self.depth))
+            for move in available_moves:
+                agent_type = (agent_index + 1) % game_state.getNumAgents()
+                # print('agent type in min: {}'.format(agent_type))
+                successor = game_state.generateSuccessor(0, move)
 
+                # print('in MAX with successor {}, and index: {}'.format(successor.state, agent_index + 1))
 
-            for move in game_state.getLegalActions():
-                # print('>> Currently looking at {} in max: '.format(move))
-                # print('>> Current agent {}'.format(agent_index))
+                successor_score = min_value(successor, agent_type, depth + 1)
+                # print('*** The successor {} returned a MIN score of {}'.format(successor.state, successor_score))
 
-                current_successor = game_state.generateSuccessor(0, move)
-                # print('max: {}'.format(current_successor.state))
-                current_score = min_value(current_successor, agent_index + 1)
+                if successor_score > best_score:
+                    best_score = successor_score
+                    # best_move = move
 
-                if not best_move:
-                    best_move = move
+            print('returning {} from max'.format(best_score))
+            return best_score
 
-                if current_score > v:
-                    # print("Update max v ({}) with {}".format(v, current_score))
-                    v = current_score
-                    best_move = move
-
-            return v
-
-        """ We want to find the maximum scored state return by MIN"""
         available_moves = gameState.getLegalActions()
-        v = float("-inf")
-        best_move = available_moves[0]
-        # print('>>>>> Number of agents {}'.format(gameState.getNumAgents()))
+        best_move = None
+        best_score = float('-inf')
+        print('Root note: {}'.format(gameState.state))
 
-        # iterate throughout the list of available moves
         for move in available_moves:
-            print('>>>> Before v: {}'.format(v))
-
-            current_successor = gameState.generateSuccessor(0, move)
-            print('DRIVER: {}'.format(current_successor.state))
-            current_score = min_value(current_successor, 1)
-
-            if current_score > v:
-                v = current_score
+            if not best_move:
                 best_move = move
 
-            print('>>>> After v: {}'.format(v))
+            successor = gameState.generateSuccessor(0, move)
+            successor_score = min_value(gameState, 0, 1)
 
+            print('\n>>> Successor {} returned the score: {}\n'.format(successor.state, successor_score))
 
-        print('>> Returning {}'.format(best_move))
+            if successor_score > best_score:
+                best_score = successor_score
+                best_move = move
+
+        print('Returning best move: {}, and best score: {}'.format(best_move, best_score))
         return best_move
-
-
-
-
-        # start at depth 0 and pacman index (0)
-        # return minimax(gameState, 0, 0)
 
         util.raiseNotDefined()
 
