@@ -257,57 +257,9 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         """
         "*** YOUR CODE HERE ***"
 
-        # def min_value(game_state, alpha, beta):
-        #     if game_state.isWin() or game_state.isLose():
-        #         return self.evaluationFunction(game_state)
-        #
-        #     print('Currently in {}'.format(game_state.state))
-        #
-        #     v = float('inf')
-        #
-        #     # for each move in legal moves, generate a successor, and find the minimum value
-        #     for move in game_state.getLegalActions():
-        #         # generate the successor
-        #         successor = game_state.generateSuccessor(0, move)
-        #
-        #         # v = max(v, value(successor, alpha, beta))
-        #         v = min(v, max_value(successor, alpha, beta))
-        #
-        #         print('In min with alpha: {}, beta: {}, v: {}, and successor_score: {}'.format(alpha, beta, v, successor_score))
-        #
-        #         if alpha >= v:
-        #             return v
-        #
-        #         beta = min(beta, v)
-        #
-        #     return v
-        #
-        #
-        # def max_value(game_state, alpha, beta):
-        #     if game_state.isWin() or game_state.isLose():
-        #         return self.evaluationFunction(game_state)
-        #
-        #     print('Currently in {}'.format(game_state.state))
-        #
-        #     v = float('-inf')
-        #
-        #     for move in game_state.getLegalActions():
-        #         successor = game_state.generateSuccessor(0, move)
-        #
-        #         print('In max with alpha: {}, beta: {} and v: {} and successor_score: {}'.format(alpha, beta, v, successor_score))
-        #
-        #         v = max(v, min_value(successor, alpha, beta))
-        #
-        #         if v >= beta:
-        #             return v
-        #
-        #         alpha = max(alpha, v)
-        #
-        #     return v
-
         def alpha_beta(game_state, depth, alpha, beta, agent_type):
             if game_state.isWin() or game_state.isLose() or depth == 0:
-                # print('Returning for state: {} its evaluation: {}'.format(game_state.state, self.evaluationFunction(game_state)))
+                # print('Returning information for state: {} its evaluation: {}, and the agent_type: {}'.format(game_state.state, self.evaluationFunction(game_state), agent_type))
                 return self.evaluationFunction(game_state)
 
             # print('Current depth {}, node: {}, and self.depth: {}, agent type: {}'.format(depth, game_state.state, self.depth, agent_type))
@@ -322,7 +274,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 for move in game_state.getLegalActions():
                     successor = game_state.generateSuccessor(agent_type, move)
 
-                    v_prime = alpha_beta(successor, depth - 1, alpha, beta, agent_type + 1)
+                    v_prime = alpha_beta(successor, depth, alpha, beta, agent_type + 1)
 
                     if v_prime > v:
                         v = max(v, v_prime)
@@ -333,7 +285,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                     if beta < v:
                         break
 
-                self.best_moves.add((game_state.state, best_move, v))
+                self.best_moves.add((game_state, best_move, v))
                 return v
             else:
                 """
@@ -348,7 +300,11 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                     # generate successors for
                     successor = game_state.generateSuccessor(agent_type, move)
 
-                    v_prime = alpha_beta(successor, depth - 1, alpha, beta, agent_type + 1)
+                    # check for multiple min layers
+                    if (agent_type + 1) == game_state.getNumAgents():
+                        v_prime = alpha_beta(successor, depth - 1, alpha, beta, agent_type + 1)
+                    else:
+                        v_prime = alpha_beta(successor, depth - 1, alpha, beta, agent_type + 1)
 
                     if v_prime < v:
                         v = min(v, v_prime)
@@ -359,7 +315,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                     if alpha > v:
                         break
 
-                self.best_moves.add((game_state.state, best_move, v))
+                self.best_moves.add((game_state, best_move, v))
                 return v
         #
         # print('Alpha beta returned: {}'.format(alpha_beta(gameState, self.depth, float('-inf'), float('inf'), 0)))
@@ -367,7 +323,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         v = alpha_beta(gameState, self.depth, float('-inf'), float('inf'), 0)
 
         for parent, key, value in self.best_moves:
-            if key in gameState.getLegalActions() and value == v and parent == gameState.state:
+            if key in gameState.getLegalActions() and value == v and parent == gameState:
                 # print('Returning key: {}, value: {}'.format(key, value))
                 return key
 
