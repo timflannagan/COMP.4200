@@ -254,6 +254,102 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
           Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
+
+        # def min_value(game_state, alpha, beta):
+        #     if game_state.isWin() or game_state.isLose():
+        #         return self.evaluationFunction(game_state)
+        #
+        #     print('Currently in {}'.format(game_state.state))
+        #
+        #     v = float('inf')
+        #
+        #     # for each move in legal moves, generate a successor, and find the minimum value
+        #     for move in game_state.getLegalActions():
+        #         # generate the successor
+        #         successor = game_state.generateSuccessor(0, move)
+        #
+        #         # v = max(v, value(successor, alpha, beta))
+        #         v = min(v, max_value(successor, alpha, beta))
+        #
+        #         print('In min with alpha: {}, beta: {}, v: {}, and successor_score: {}'.format(alpha, beta, v, successor_score))
+        #
+        #         if alpha >= v:
+        #             return v
+        #
+        #         beta = min(beta, v)
+        #
+        #     return v
+        #
+        #
+        # def max_value(game_state, alpha, beta):
+        #     if game_state.isWin() or game_state.isLose():
+        #         return self.evaluationFunction(game_state)
+        #
+        #     print('Currently in {}'.format(game_state.state))
+        #
+        #     v = float('-inf')
+        #
+        #     for move in game_state.getLegalActions():
+        #         successor = game_state.generateSuccessor(0, move)
+        #
+        #         print('In max with alpha: {}, beta: {} and v: {} and successor_score: {}'.format(alpha, beta, v, successor_score))
+        #
+        #         v = max(v, min_value(successor, alpha, beta))
+        #
+        #         if v >= beta:
+        #             return v
+        #
+        #         alpha = max(alpha, v)
+        #
+        #     return v
+
+
+        def alpha_beta(game_state, depth, alpha, beta, agent_type):
+            if game_state.isWin() or game_state.isLose() or depth == 0:
+                return self.evaluationFunction(game_state)
+
+            best_move = game_state.getLegalActions()[0]
+
+            if agent_type:
+                v = float('-inf')
+
+                for move in game_state.getLegalActions():
+                    successor = game_state.generateSuccessor(0, move)
+
+                    v_prime = alpha_beta(successor, depth - 1, alpha, beta, 'min')
+
+                    if v_prime > v:
+                        v = v_prime
+                        best_move = move
+
+                    alpha = max(alpha, v)
+
+                    if alpha >= beta:
+                        break
+
+                return v, best_move
+            else:
+                v = float('inf')
+
+                for move in game_state.getLegalActions():
+                    successor = game_state.generateSuccessor(1, move)
+
+                    v_prime = alpha_beta(successor, depth - 1, alpha, beta, False)
+
+                    if v_prime < v:
+                        v = v_prime
+                        best_move = move
+
+                    beta = min(beta, v)
+
+                    if alpha >= beta:
+                        break
+
+                return v, best_move
+
+            return best_move
+
+        return alpha_beta(gameState, self.depth, float('-inf'), float('inf'), True)[1]
         util.raiseNotDefined()
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
