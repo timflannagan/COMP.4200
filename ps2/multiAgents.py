@@ -249,6 +249,8 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
       Your minimax agent with alpha-beta pruning (question 3)
     """
 
+    best_moves = set()
+
     def getAction(self, gameState):
         """
           Returns the minimax action using self.depth and self.evaluationFunction
@@ -303,53 +305,72 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         #
         #     return v
 
-
         def alpha_beta(game_state, depth, alpha, beta, agent_type):
             if game_state.isWin() or game_state.isLose() or depth == 0:
+                # print('Returning for state: {} its evaluation: {}'.format(game_state.state, self.evaluationFunction(game_state)))
                 return self.evaluationFunction(game_state)
 
+            # print('Current depth {}, node: {}, and self.depth: {}, agent type: {}'.format(depth, game_state.state, self.depth, agent_type))
             best_move = game_state.getLegalActions()[0]
 
-            if agent_type:
+            # check if max player
+            if agent_type == 0 or agent_type == game_state.getNumAgents():
+                # print('*** Call max on node: {}'.format(game_state.state))
+                # agent_type = 0
                 v = float('-inf')
 
                 for move in game_state.getLegalActions():
-                    successor = game_state.generateSuccessor(0, move)
+                    successor = game_state.generateSuccessor(agent_type, move)
 
-                    v_prime = alpha_beta(successor, depth - 1, alpha, beta, 'min')
+                    v_prime = alpha_beta(successor, depth - 1, alpha, beta, agent_type + 1)
 
                     if v_prime > v:
-                        v = v_prime
+                        v = max(v, v_prime)
                         best_move = move
 
                     alpha = max(alpha, v)
 
-                    if alpha >= beta:
+                    if beta < v:
                         break
 
-                return v, best_move
+                self.best_moves.add((game_state.state, best_move, v))
+                return v
             else:
+                """
+                here agent_type could be anything between 1 <= agent_type <= game_state.getNumAgents()
+                0 -> pacman/max node
+                1 <= agent_type <= game_state.getNumAgents() -> min node
+                """
                 v = float('inf')
 
-                for move in game_state.getLegalActions():
-                    successor = game_state.generateSuccessor(1, move)
+                # iterate through available moves from the current agent type
+                for move in game_state.getLegalActions(agent_type):
+                    # generate successors for
+                    successor = game_state.generateSuccessor(agent_type, move)
 
-                    v_prime = alpha_beta(successor, depth - 1, alpha, beta, False)
+                    v_prime = alpha_beta(successor, depth - 1, alpha, beta, agent_type + 1)
 
                     if v_prime < v:
-                        v = v_prime
+                        v = min(v, v_prime)
                         best_move = move
 
                     beta = min(beta, v)
 
-                    if alpha >= beta:
+                    if alpha > v:
                         break
 
-                return v, best_move
+                self.best_moves.add((game_state.state, best_move, v))
+                return v
+        #
+        # print('Alpha beta returned: {}'.format(alpha_beta(gameState, self.depth, float('-inf'), float('inf'), 0)))
+        # print('Best moves set: {}'.format(self.best_moves))
+        v = alpha_beta(gameState, self.depth, float('-inf'), float('inf'), 0)
 
-            return best_move
+        for parent, key, value in self.best_moves:
+            if key in gameState.getLegalActions() and value == v and parent == gameState.state:
+                # print('Returning key: {}, value: {}'.format(key, value))
+                return key
 
-        return alpha_beta(gameState, self.depth, float('-inf'), float('inf'), True)[1]
         util.raiseNotDefined()
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
