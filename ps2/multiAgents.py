@@ -364,14 +364,18 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             if game_state.isWin() or game_state.isLose() or depth == 0:
                 return self.evaluationFunction(game_state)
 
+            # print('Agent type: {}'.format(agent_type))
+
             # get available moves to the current state
             # change this later as we can reuse in conditional blocks but need to use agent_type
             available_moves = game_state.getLegalActions()
             best_move = available_moves[0]
             num_agents = game_state.getNumAgents()
+            max_flag = False
 
             # check whether the current agent is a MAX agent:
-            if agent_type == 0 or agent_type == num_agents:
+            if agent_type == 0:
+                max_flag = True
                 v = float('-inf')
 
                 for move in game_state.getLegalActions():
@@ -382,7 +386,6 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
                         v = v_prime
                         best_move = move
 
-                # print('(max) Returning {} for {} state. Theres {} legal moves with a total sum of {}'.format((v / len(available_moves)), game_state.state, len(available_moves), v))
                 self.best_moves.add((game_state, best_move, v))
                 return v
             else:
@@ -392,17 +395,6 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
                 # can respond randomly; values should reflect average-case (expecti_max)
                 # instead of worst-case (mini_max)
                 v = 0.0
-
-                # this is a EXP agent
-
-                """
-                for each successor of state:
-                    p = probability(successor)
-                    v += (p * value(successor))
-
-                    avg = sum(value(successor)) / # of agents
-                """
-                # print('(in min) current state: {}'.format(game_state.state))
 
                 # set appropriate agent type
                 if agent_type == (num_agents - 1):
@@ -419,10 +411,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
                 for move in available_moves:
                     successor = game_state.generateSuccessor(agent_type, move)
                     v_prime = expectimax(successor, next_depth, next_agent)
-                    # print("\t(in exp) Successor: {}, v: {}, v': {}".format(successor.state, v, v_prime))
-
                     v += v_prime
-                    # print('\t(in exp) after v: {}'.format(v))
 
                 # print('(in exp) Returning the state: {}, the sum: {}, legal moves: {}'.format(game_state.state, v, len(available_moves)))
                 # print('(in exp) Returning {} for {} state. Theres {} legal moves with a total sum of {}'.format((v / len(available_moves)), game_state.state, len(available_moves), v))
@@ -445,6 +434,39 @@ def betterEvaluationFunction(currentGameState):
       DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
+
+    # print(currentGameState.getLegalActions())
+    #
+    # # get distance to food
+    # print(currentGameState.getFood().asList())
+
+    new_position = currentGameState.getPacmanPosition()
+    new_ghost_state = currentGameState.getGhostStates()
+    # print(new_position)
+    closest_food_dist = float('inf')
+    closest_ghost_dist = float('inf')
+    total_food_score = 0.0
+    total_ghost_score = 0.0
+
+
+    for food in currentGameState.getFood().asList():
+        current_food_dist = util.manhattanDistance(food, new_position)
+        closest_food_dist = min(closest_food_dist, current_food_dist)
+
+    # compute the weight for food distance
+    if (closest_food_dist < 1):
+        total_food_score += 45
+    elif (closest_food_dist < 3):
+        total_food_score += 35
+    else:
+        total_food_score += 25
+
+    # compute the distance to ghost
+    if (new_position == new_ghost_state[0].getPosition()):
+        total_ghost_score -= 50
+
+    return total_food_score + total_ghost_score + currentGameState.getScore()
+
     util.raiseNotDefined()
 
 # Abbreviation
