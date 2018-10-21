@@ -188,19 +188,23 @@ class MinimaxAgent(MultiAgentSearchAgent):
         """
 
         def minimax(game_state, depth, agent_type):
+            # check if current state is a leaf (depth is 0) or terminal state
             if game_state.isWin() or game_state.isLose() or depth == 0:
                 return self.evaluationFunction(game_state)
 
+            # get available moves to the current state
+            # change this later as we can reuse in conditional blocks but need to use agent_type
             available_moves = game_state.getLegalActions()
             best_move = available_moves[0]
-            print('Agent type passed: {}'.format(agent_type))
+            num_agents = game_state.getNumAgents()
 
-            if agent_type == 0 or agent_type == game_state.getNumAgents():
+            # check whether the current agent is a MAX agent:
+            if agent_type == 0 or agent_type == num_agents:
                 v = float('-inf')
 
                 for move in game_state.getLegalActions():
                     successor = game_state.generateSuccessor(0, move)
-                    v_prime = minimax(successor, depth, agent_type + 1)
+                    v_prime = minimax(successor, depth, 1)
 
                     if v_prime > v:
                         v = v_prime
@@ -211,9 +215,17 @@ class MinimaxAgent(MultiAgentSearchAgent):
             else:
                 v = float('inf')
 
+                # set appropriate agent type
+                if agent_type == (num_agents - 1):
+                    next_agent = 0
+                    next_depth = depth - 1
+                else:
+                    next_agent = agent_type + 1
+                    next_depth = depth
+
                 for move in game_state.getLegalActions(agent_type):
                     successor = game_state.generateSuccessor(agent_type, move)
-                    v_prime = minimax(successor, depth - 1, agent_type + 1)
+                    v_prime = minimax(successor, next_depth, next_agent)
 
                     if v > v_prime:
                         v = v_prime
@@ -222,7 +234,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
                 self.best_moves.add((game_state, best_move, v))
                 return v
 
-        v = minimax(gameState, self.depth, 0)
+        v = minimax(gameState, self.depth, self.index)
 
         for parent, key, value in self.best_moves:
             if key in gameState.getLegalActions() and value == v and parent == gameState:
@@ -251,25 +263,14 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 return self.evaluationFunction(game_state)
 
             best_move = game_state.getLegalActions()[0]
+            num_agents = game_state.getNumAgents()
 
             # check if the current agent type is a maximum or minimum agent
-            if agent_type == 0 or agent_type == game_state.getNumAgents():
+            if agent_type == 0 or agent_type == num_agents:
                 v = float('-inf')
 
                 for move in game_state.getLegalActions():
                     successor = game_state.generateSuccessor(agent_type, move)
-
-                    # maybe think about consecutive max layers, but not sure why the pacman
-                    # test is failing atm. The error message displayed says that
-                    # this implementation of alpha_beta doesn't expand the correct
-                    # number of states. The pacman AI operates in a floew where
-                    # the max agent (PACMAN) goes first, and the two ghost agents
-                    # (MIN) go next. I think what's problematic potentially is
-                    # when there's only one ghost available and the incorrect
-                    # depth or agent type is being passed. In the future, look at
-                    # max/min agent and check whether (depth - 1), or (agent + 1)
-                    # is needed in every general case. I believe there's something
-                    # wrong with the max implementation atm, but test later.
                     v_prime = alpha_beta(successor, depth, alpha, beta, agent_type + 1)
 
                     if v_prime > v:
@@ -291,10 +292,18 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 """
                 v = float('inf')
 
+                # set appropriate agent type
+                if agent_type == (num_agents - 1):
+                    next_agent = 0
+                    next_depth = depth - 1
+                else:
+                    next_agent = agent_type + 1
+                    next_depth = depth
+
                 # iterate through available moves from the current agent type
                 for move in game_state.getLegalActions(agent_type):
                     successor = game_state.generateSuccessor(agent_type, move)
-                    v_prime = alpha_beta(successor, depth - 1, alpha, beta, agent_type + 1)
+                    v_prime = alpha_beta(successor, next_depth, alpha, beta, next_agent)
 
                     if v_prime < v:
                         v = min(v, v_prime)
@@ -321,14 +330,87 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
       Your expectimax agent (question 4)
     """
 
+    best_moves = set()
+
     def getAction(self, gameState):
         """
-          Returns the expectimax action using self.depth and self.evaluationFunction
+          Returns the minimax action from the current gameState using self.depth
+          and self.evaluationFunction.
 
-          All ghosts should be modeled as choosing uniformly at random from their
-          legal moves.
+          Here are some method calls that might be useful when implementing minimax.
+
+          gameState.getLegalActions(agentIndex):
+            Returns a list of legal actions for an agent
+            agentIndex=0 means Pacman, ghosts are >= 1
+
+          gameState.generateSuccessor(agentIndex, action):
+            Returns the successor game state after an agent takes an action
+
+          gameState.getNumAgents():
+            Returns the total number of agents in the game
         """
         "*** YOUR CODE HERE ***"
+        """
+        Note: should use self.depth, self.evaluationFunction
+        Current Problems/To-do:
+        1. Need to track depth so maximum depth isn't reached.
+           - This could probably be achieved by comparing the depth of the current
+             node with the initial depth: if (depth > self.depth): -> evaluate the state
+        2. Modify minimax to be modular so it can handle more than two agent
+        """
+
+        def expecti_max(game_state, depth, agent_type):
+            # check if current state is a leaf (depth is 0) or terminal state
+            if game_state.isWin() or game_state.isLose() or depth == 0:
+                return self.evaluationFunction(game_state)
+
+            # get available moves to the current state
+            # change this later as we can reuse in conditional blocks but need to use agent_type
+            available_moves = game_state.getLegalActions()
+            best_move = available_moves[0]
+            num_agents = game_state.getNumAgents()
+
+            # check whether the current agent is a MAX agent:
+            if agent_type == 0 or agent_type == num_agents:
+                v = float('-inf')
+
+                for move in game_state.getLegalActions():
+                    successor = game_state.generateSuccessor(0, move)
+                    v_prime = expecti_max(successor, depth, 1)
+
+                    if v_prime > v:
+                        v = v_prime
+                        best_move = move
+
+                self.best_moves.add((game_state, best_move, v))
+                return v
+            else:
+                v = float('inf')
+
+                # set appropriate agent type
+                if agent_type == (num_agents - 1):
+                    next_agent = 0
+                    next_depth = depth - 1
+                else:
+                    next_agent = agent_type + 1
+                    next_depth = depth
+
+                for move in game_state.getLegalActions(agent_type):
+                    successor = game_state.generateSuccessor(agent_type, move)
+                    v_prime = expecti_max(successor, next_depth, next_agent)
+
+                    if v > v_prime:
+                        v = v_prime
+                        best_move = move
+
+                self.best_moves.add((game_state, best_move, v))
+                return v
+
+        v = expecti_max(gameState, self.depth, self.index)
+
+        for parent, key, value in self.best_moves:
+            if key in gameState.getLegalActions() and value == v and parent == gameState:
+                return key
 
         util.raiseNotDefined()
 
