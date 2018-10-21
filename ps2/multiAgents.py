@@ -359,7 +359,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         2. Modify minimax to be modular so it can handle more than two agent
         """
 
-        def expecti_max(game_state, depth, agent_type):
+        def expectimax(game_state, depth, agent_type):
             # check if current state is a leaf (depth is 0) or terminal state
             if game_state.isWin() or game_state.isLose() or depth == 0:
                 return self.evaluationFunction(game_state)
@@ -376,16 +376,33 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
 
                 for move in game_state.getLegalActions():
                     successor = game_state.generateSuccessor(0, move)
-                    v_prime = expecti_max(successor, depth, 1)
+                    v_prime = expectimax(successor, depth, 1)
 
                     if v_prime > v:
                         v = v_prime
                         best_move = move
 
+                # print('(max) Returning {} for {} state. Theres {} legal moves with a total sum of {}'.format((v / len(available_moves)), game_state.state, len(available_moves), v))
                 self.best_moves.add((game_state, best_move, v))
                 return v
             else:
-                v = float('inf')
+                # with expecti_max, we need to track max, chance, and min nodes
+                # uncertain outcomes are controlled by chance and not by an adversary
+                # in this case, we don't know the result of an action as the ghosts
+                # can respond randomly; values should reflect average-case (expecti_max)
+                # instead of worst-case (mini_max)
+                v = 0.0
+
+                # this is a EXP agent
+
+                """
+                for each successor of state:
+                    p = probability(successor)
+                    v += (p * value(successor))
+
+                    avg = sum(value(successor)) / # of agents
+                """
+                # print('(in min) current state: {}'.format(game_state.state))
 
                 # set appropriate agent type
                 if agent_type == (num_agents - 1):
@@ -395,18 +412,24 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
                     next_agent = agent_type + 1
                     next_depth = depth
 
-                for move in game_state.getLegalActions(agent_type):
+                available_moves = game_state.getLegalActions(agent_type)
+
+                # for each legal move in the current state, add up all the successor
+                # values, and return that sum / the # of legal moves
+                for move in available_moves:
                     successor = game_state.generateSuccessor(agent_type, move)
-                    v_prime = expecti_max(successor, next_depth, next_agent)
+                    v_prime = expectimax(successor, next_depth, next_agent)
+                    # print("\t(in exp) Successor: {}, v: {}, v': {}".format(successor.state, v, v_prime))
 
-                    if v > v_prime:
-                        v = v_prime
-                        best_move = move
+                    v += v_prime
+                    # print('\t(in exp) after v: {}'.format(v))
 
-                self.best_moves.add((game_state, best_move, v))
-                return v
+                # print('(in exp) Returning the state: {}, the sum: {}, legal moves: {}'.format(game_state.state, v, len(available_moves)))
+                # print('(in exp) Returning {} for {} state. Theres {} legal moves with a total sum of {}'.format((v / len(available_moves)), game_state.state, len(available_moves), v))
+                # self.best_moves.add((game_state, best_move, v))
+                return (v / len(available_moves))
 
-        v = expecti_max(gameState, self.depth, self.index)
+        v = expectimax(gameState, self.depth, self.index)
 
         for parent, key, value in self.best_moves:
             if key in gameState.getLegalActions() and value == v and parent == gameState:
