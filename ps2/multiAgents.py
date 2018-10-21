@@ -193,6 +193,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
             available_moves = game_state.getLegalActions()
             best_move = available_moves[0]
+            print('Agent type passed: {}'.format(agent_type))
 
             if agent_type == 0 or agent_type == game_state.getNumAgents():
                 v = float('-inf')
@@ -258,6 +259,17 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 for move in game_state.getLegalActions():
                     successor = game_state.generateSuccessor(agent_type, move)
 
+                    # maybe think about consecutive max layers, but not sure why the pacman
+                    # test is failing atm. The error message displayed says that
+                    # this implementation of alpha_beta doesn't expand the correct
+                    # number of states. The pacman AI operates in a floew where
+                    # the max agent (PACMAN) goes first, and the two ghost agents
+                    # (MIN) go next. I think what's problematic potentially is
+                    # when there's only one ghost available and the incorrect
+                    # depth or agent type is being passed. In the future, look at
+                    # max/min agent and check whether (depth - 1), or (agent + 1)
+                    # is needed in every general case. I believe there's something
+                    # wrong with the max implementation atm, but test later.
                     v_prime = alpha_beta(successor, depth, alpha, beta, agent_type + 1)
 
                     if v_prime > v:
@@ -317,6 +329,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
           legal moves.
         """
         "*** YOUR CODE HERE ***"
+
         util.raiseNotDefined()
 
 def betterEvaluationFunction(currentGameState):
