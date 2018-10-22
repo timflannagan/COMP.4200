@@ -1,4 +1,27 @@
 Chapter 9: Adversarial Search
+- Zero-sum games:
+  • Agents have opposite utilities
+  • Adversarial, pure competition
+  • Minimax:
+    - Time: O(b^m)
+    - Space: O(bm)
+    - Overall: space is pretty good, but time is problematic as most
+      branching factors are going to be large (chess is b ~ 35, m ~ 100)
+  • Resource limits (could you depth-limited search):
+    - In realistic games, we cannot search to the leaves.
+    - If we can search to the leaves, then we cannot evaluate the
+      terminal states, and therefore need an evaluation function to
+      determine the utility for that non-terminal state.
+    - Guarantee of optimal play is gone.
+    - The deeper you search in the tree, the less the quality of the
+      evaluation function matters.
+  • Evaluation function:
+    - In practice, this is usually a weighted linear sum of features
+    - Trashing is a problem that arises with poor evaluation function.
+  • Pruning has no effect on minimax value computed for the root.
+    - Time complexity drops to O(b^m/2)
+    - Simple example of metareasoning
+    
 - Search overview:
   • Expectimax overview:
     - Deal with average-case now when outcomes are uncertain
