@@ -1,0 +1,39 @@
+Chapter 9: Adversarial Search
+- Search overview:
+  • Expectimax overview:
+    - Deal with average-case now when outcomes are uncertain
+    - Previously we dealt with worst-case in minimax, but that
+      assumes outcomes are certain and the other adversary is playing
+      optimally, which isn't always the case.
+  • Hard to prune expectimax like we can do with minimax
+    - This is because we could find 1M in the pruned children
+  • Depth-limited expectimax
+  • For worst-case minimax, the terminal evaluation scale doesn't matter
+    as we want better states to have higher evaluations. The thing that
+    does matter is the ordering of the states.
+  • For average-case expectimax, the magnitudes need to be reasonable.
+  • The dangers of optimism and pessimism:
+    - Don't want to assume chance when the world is adversarial, and
+      don't want to assume worst-case when that's not likely.
+  • Expectiminimax tree:
+    - Environment is where there's an extra player that moves after each
+      min/max agent.
+
+- Probability overview:
+  • Random variable: represents a variable whose outcome is unknown.
+  • Probability distribution: assignment of weights to outcomes.
+  • Basic laws:
+    - Probabilities cannot be negative.
+    - Probabilities of one outcome sum to 1.
+
+- Search for non zero-sum games:
+  • Every agent acts to maximize their utility.
+    - This means that some agents may work together in some situations
+      in order to maximize their utility.
+    - This cooperation or competition between the agents in the world
+      is done dynamically.
+  • Principle of maximum expected utility:
+    - A rational agent should maximize its expected utility, given its
+      knowledge.
+      • This implies expectimax, and not minimax.
+  • We hardwire utilities, and let behaviors emerge.
