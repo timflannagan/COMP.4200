@@ -81,6 +81,8 @@ class ReflexAgent(Agent):
         Current problems/To-Do:
         [x] pacman constantly stopping in-place
         [x] use manhattanDistance instead of manual abs
+        [x] discourage pacman stopping randomly
+        [ ] add proximity to next food to stop trashing
         [ ] implement linear evaluation function
         [ ] implement capsules
         [ ] stop pacman bounces around in the same spot when food is near walls
@@ -91,34 +93,31 @@ class ReflexAgent(Agent):
         calculated_score = 0
         closest_food = None
 
-        # iterate through the list of food to determine the closest food position
         for food in newFood.asList():
             distance_to_food = util.manhattanDistance(food, newPos)
 
             if not closest_food:
                 closest_food = distance_to_food
-            elif (distance_to_food < closest_food):
-                closest_food = distance_to_food
+            closest_food = min(closest_food, distance_to_food)
 
-        # play around with weights
+        ghost_dist = util.manhattanDistance(newPos, newGhostStates[0].getPosition())
+
         if (closest_food < 1):
-            if currentGameState.getNumFood() <= successorGameState.getNumFood():
-                calculated_score -= 100
-            else:
-                calculated_score += 50
+            calculated_score += 30
         elif (closest_food < 5):
-            calculated_score += 40
-        elif (closest_food < 8):
-            calculated_score += 35
-        else:
             calculated_score += 20
+        else:
+            calculated_score += 10
 
-        # had a problem where pacman would constantly stop in place
+        # discourage stopping
         if action == Directions.STOP:
             calculated_score -= 20
 
+        # do a depth-1 search
+        current_ghost_pos = newGhostStates[0].getPosition()
+
         # discourage going to the same location as the ghost
-        if (newPos == newGhostStates[0].getPosition() and action == newGhostStates[0].getDirection()):
+        if (newPos[0] == current_ghost_pos):
             calculated_score -= 50
 
         return calculated_score + successorGameState.getScore()
@@ -434,15 +433,8 @@ def betterEvaluationFunction(currentGameState):
       DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
-
-    # print(currentGameState.getLegalActions())
-    #
-    # # get distance to food
-    # print(currentGameState.getFood().asList())
-
     new_position = currentGameState.getPacmanPosition()
     new_ghost_state = currentGameState.getGhostStates()
-    # print(new_position)
     closest_food_dist = float('inf')
     closest_ghost_dist = float('inf')
     total_food_score = 0.0

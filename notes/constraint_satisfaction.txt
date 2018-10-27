@@ -1,0 +1,4 @@
+Lecture #4 and #5: Constraint Satisfaction Problems
+- Search Overview:
+  • Planning: sequences of actions
+  • Identification: assignments to variables 
