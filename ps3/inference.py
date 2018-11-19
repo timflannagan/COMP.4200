@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -149,16 +149,31 @@ class ExactInference(InferenceModule):
         pacmanPosition = gameState.getPacmanPosition()
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
         # Replace this code with a correct observation update
         # Be sure to handle the "jail" edge case where the ghost is eaten
         # and noisyDistance is None
         allPossible = util.Counter()
-        for p in self.legalPositions:
-            trueDistance = util.manhattanDistance(p, pacmanPosition)
-            if emissionModel[trueDistance] > 0:
-                allPossible[p] = 1.0
+
+        """
+        Useful info:
+        1. Given an observation from Pacman's sensor, we need to correctly
+           update the agent's belief distribution over ghost positions.
+        2. Only need to handle one special case: when a ghost is eaten,
+           you should place that ghost in its prison cell.
+        """
+
+
+        """ Check if ghost was captured by Pacman. Update all beliefs. """
+        if (noisyDistance is None):
+            curr_ghost_pos = self.getJailPosition()
+            allPossible[curr_ghost_pos] = 1.0
+        else:
+            for p in self.legalPositions:
+                trueDistance = util.manhattanDistance(p, pacmanPosition)
+                if emissionModel[trueDistance] > 0:
+                    allPossible[p] = emissionModel[trueDistance] * self.beliefs[p]
+                else:
+                    allPossible[p] = 0.0
 
         "*** END YOUR CODE HERE ***"
 
@@ -219,7 +234,33 @@ class ExactInference(InferenceModule):
         positions after a time update from a particular position.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+
+        """
+        Useful info:
+        1. Use `newPosDist = self.getPositionDistribution(self.setGhostPosition(gameState, oldPos))`
+           where oldPos can be the current variable while iterating over available positions
+        2. Use `util.counter to get available positions`
+        3. Use `for newPos, prob in newPosDist.items():``
+           to iterating over the key, value pair in the new positions dictionary
+        4. Ex of new_pos dictionary:
+           {(1.0, 3.0): 0.3333333333333333, (2.0, 3.0): 0.3333333333333333, (1.0, 4.0): 0.3333333333333333}
+
+        Note: most of the code was copy pasted from the observe function above.
+        """
+
+        all_possible = util.Counter()
+
+        # iterate over all legal positions and compute the new position distribution given the current element in the loop.
+        for curr_pos in self.legalPositions:
+            new_dist = self.getPositionDistribution(self.setGhostPosition(gameState, curr_pos))
+
+            # update all_possible[pos] to reflect the P( belief[curr_pos] )
+            for pos, prob in new_dist.items():
+                all_possible[pos] += self.beliefs[curr_pos] * prob
+
+        all_possible.normalize()
+        self.beliefs = all_possible
 
     def getBeliefDistribution(self):
         return self.beliefs
@@ -525,4 +566,3 @@ def setGhostPositions(gameState, ghostPositions):
         conf = game.Configuration(pos, game.Directions.STOP)
         gameState.data.agentStates[index + 1] = game.AgentState(conf, False)
     return gameState
-
