@@ -295,6 +295,13 @@ class ParticleFilter(InferenceModule):
         weight with each position) is incorrect and may produce errors.
         """
         "*** YOUR CODE HERE ***"
+        particles = list()
+
+        for pos in self.legalPositions:
+            for particle in range(self.numParticles):
+                particles.append(pos)
+
+        self.particles = particles
 
     def observe(self, observation, gameState):
         """
@@ -327,6 +334,46 @@ class ParticleFilter(InferenceModule):
         emissionModel = busters.getObservationDistribution(noisyDistance)
         pacmanPosition = gameState.getPacmanPosition()
         "*** YOUR CODE HERE ***"
+
+        DEBUG = False
+        beliefs = util.Counter()
+        prev_beliefs = self.getBeliefDistribution()
+        curr_dist = float('inf')
+
+        # Update all particles if Pacman has captured a ghost
+        if noisyDistance is None:
+            new_particles = list()
+
+            if DEBUG:
+                print('Creating a new list after Pacman captured one of the ghosts.')
+
+            for particle in range(self.numParticles):
+                new_particles.append(self.getJailPosition())
+
+            self.particles = new_particles
+        else:
+            for particle in self.particles:
+                curr_dist = util.manhattanDistance(particle, pacmanPosition)
+                beliefs[particle] += emissionModel[curr_dist]
+
+                if DEBUG:
+                    print('Current particle: {} and distance between pacman and current particle: {}'.\
+                           format(particle, curr_dist))
+
+            if beliefs.totalCount() is 0:
+                if DEBUG:
+                    print('All the particles have a weight of 0. Recreating with previous distribution.')
+
+                self.initializeUniformly(gameState)
+            else:
+                new_particles_list = list()
+
+                for particle in range(self.numParticles):
+                    curr_sample = util.sample(beliefs)
+                    new_particles_list.append(curr_sample)
+
+                self.particles = new_particles_list
+
         util.raiseNotDefined()
 
     def elapseTime(self, gameState):
@@ -354,6 +401,13 @@ class ParticleFilter(InferenceModule):
         Counter object)
         """
         "*** YOUR CODE HERE ***"
+
+        beliefs = util.Counter()
+
+        for particle in self.particles:
+            beliefs[particle] += 1
+
+        return util.normalize(beliefs)
         util.raiseNotDefined()
 
 class MarginalInference(InferenceModule):
