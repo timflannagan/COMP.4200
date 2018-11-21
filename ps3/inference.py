@@ -391,7 +391,25 @@ class ParticleFilter(InferenceModule):
         a belief distribution.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        prev_beliefs = self.getBeliefDistribution()
+        beliefs = util.Counter()
+
+        """
+        Copy and paste previous elapseTime function used in ExactInference, and
+        replace self.beliefs with particles as applicable.
+        """
+        for curr_pos in self.legalPositions:
+            new_dist = self.getPositionDistribution(self.setGhostPosition(gameState, curr_pos))
+            curr_sample = util.sample(prev_beliefs)
+
+            for pos, prob in new_dist.items():
+                beliefs[pos] += prev_beliefs[curr_pos] * prob
+
+        beliefs.normalize()
+        new_particles = [util.sample(beliefs) for particle in self.particles]
+        self.particles = new_particles
+
+        # util.raiseNotDefined()
 
     def getBeliefDistribution(self):
         """
