@@ -561,7 +561,7 @@ class JointParticleFilter:
         - As before, if noisyDistance is None: ghost has been captured.
 
         Steps:
-        [ ]. Iterate over the list of particles (self.particles) and check if the
+        [x]. Iterate over the list of particles (self.particles) and check if the
              corresponding index of noisyDistances is None (ghost has been captured.)
              - Note: this is now a list of noisyDistances and need to take into
                consideration the # of ghosts (self.numGhosts) as the JointParticleFilter
@@ -673,6 +673,30 @@ class JointParticleFilter:
             # now loop through and update each entry in newParticle...
 
             "*** YOUR CODE HERE ***"
+            '''
+            Steps:
+            [x]. Iterate over ghosts:
+                 [ ]. Update each entry in newParticle by getPositionDistribution...
+                      [x]. Update prevGhostPositions with correct name of variable
+                           used to refer to the list of previous positions. Should
+                           try using newParticle first using DEBUG flag, then test
+                           out if that works or not.
+                 [ ]. We then need to sample this new probability distribution and
+                      assign that sample to the newParticle at the current ghost
+                      agent index.
+            '''
+            DEBUG = False
+
+            for ghost_index in range(self.numGhosts):
+                '''Get the new position distribution, then get the sample of that new distribution.'''
+                if DEBUG:
+                    print('List of new particles: {}'.format(newParticle))
+
+                new_pos_dist = getPositionDistributionForGhost(
+                    setGhostPositions(gameState, newParticle), ghost_index,
+                    self.ghostAgents[ghost_index]
+                )
+                newParticle[ghost_index] = util.sample(new_pos_dist)
 
             "*** END YOUR CODE HERE ***"
             newParticles.append(tuple(newParticle))
