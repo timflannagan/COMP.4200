@@ -219,7 +219,6 @@ class ExactInference(InferenceModule):
         positions after a time update from a particular position.
         """
         "*** YOUR CODE HERE ***"
-
         util.raiseNotDefined()
 
     def getBeliefDistribution(self):
@@ -353,10 +352,19 @@ class ParticleFilter(InferenceModule):
         a belief distribution.
         """
         "*** YOUR CODE HERE ***"
-        newDist = []
-        for particle in self.particles:
-            newDist.append(util.sample(self.getPositionDistribution(self.setGhostPosition(gameState, particle))))
-        self.particles = newDist
+        prev_beliefs = self.getBeliefDistribution()
+        beliefs = util.Counter()
+
+        for curr_position in self.legalPositions:
+            new_dist = self.getPositionDistribution(self.setGhostPosition(gameState, curr_position))
+            curr_sample = util.sample(prev_beliefs)
+
+            for position, prob in new_dist.items():
+                beliefs[position] += prev_beliefs[curr_position] * prob
+
+        beliefs.normalize()
+        new_particles = [util.sample(beliefs) for particle in self.particles]
+        self.particles = new_particles
         # util.raiseNotDefined()
 
     def getBeliefDistribution(self):
@@ -372,7 +380,7 @@ class ParticleFilter(InferenceModule):
         Steps:
         [x]. Define a list of particles for this class
         [x]. Define a belief distribution (counter object)
-        [x]. Iterate over the list of particles
+        [ ]. Iterate over the list of particles
              - Convert the current particle into a belief given the ghost
                location and time passage.
         '''
@@ -440,7 +448,6 @@ class JointParticleFilter:
         self.numGhosts = gameState.getNumAgents() - 1
         self.ghostAgents = []
         self.legalPositions = legalPositions
-        self.particles = []
         self.initializeParticles()
 
     def initializeParticles(self):
@@ -465,48 +472,6 @@ class JointParticleFilter:
         weight with each position) is incorrect and may produce errors.
         """
         "*** YOUR CODE HERE ***"
-
-        '''
-        Variables:
-        1. self.numParticles: # of particles in game.
-        2. self.numGhosts: # of ghosts in game.
-        3. self.legalPosition: list of legal positions given pacman's location.
-        4. self.particles: list of particles (tuple of ghost positions.)
-
-        Sources:
-        - Itertools: https://docs.python.org/3/library/itertools.html
-          * Product usage: p, q, ... [repeat=1]
-          * Returns: cartesian product, equivalent to a nested for-loop
-          * Note: must shuffle permutations in order to ensure even placement
-            of particles across the board.
-        - Shuffle: https://stackoverflow.com/questions/976882/shuffling-a-list-of-objects
-
-        Steps:
-        [x]. Use itertools.product to get a list of possible, legal ghost position tuples.
-        [x]. Shuffle the list of ghost positions in order to ensure even placement of
-             particles across the board.
-        [ ]. Populate self.particles by iterating over self.numParticles
-             [ ].
-        '''
-
-        DEBUG = False
-
-        possible_ghost_positions = list(itertools.product(self.legalPositions, repeat = self.numGhosts))
-
-        if DEBUG:
-            print('Possible ghost positions (before shuffle): {}'.format(possible_ghost_positions[0:10]))
-
-        random.shuffle(possible_ghost_positions)
-
-        if DEBUG:
-            print('Possible ghost positions (after shuffle): {}'.format(possible_ghost_positions[0:10]))
-
-        for particle in range(self.numParticles):
-            for ghost_position in possible_ghost_positions:
-                self.particles.append(ghost_position)
-
-        if DEBUG:
-            print('Particles list (sectioned): {}'.format(self.particles[0:10]))
 
     def addGhostAgent(self, agent):
         """
@@ -554,65 +519,6 @@ class JointParticleFilter:
         emissionModels = [busters.getObservationDistribution(dist) for dist in noisyDistances]
 
         "*** YOUR CODE HERE ***"
-
-        '''
-        Purpose: resample self.particles using the likelihood of the noisy observation.
-        Notes:
-        - As before, if noisyDistance is None: ghost has been captured.
-
-        Steps:
-        [ ]. Iterate over the list of particles (self.particles) and check if the
-             corresponding index of noisyDistances is None (ghost has been captured.)
-             - Note: this is now a list of noisyDistances and need to take into
-               consideration the # of ghosts (self.numGhosts) as the JointParticleFilter
-               object is compsed of multiple ghosts.
-             - We also need to take into consideration the # of particles.
-             - Use self.getParticleWithGhostInJail to edit a specific particle
-
-        Current Problems:
-        [x]. Indexing out of range in util.sample
-             See: https://stackoverflow.com/questions/15008380/double-equals-vs-is-in-python
-        '''
-
-        DEBUG = False
-        belief_dist = util.Counter()
-        print_counter = 0
-
-        '''Go through the general case'''
-        for particle in self.particles:
-            '''Note: emission model is now a list of distributions (list) instead of a distribution. Need to manually track emission prob.'''
-            curr_emission_prob = 1.0
-
-            for ghost_index in range(self.numGhosts):
-                if noisyDistances[ghost_index] is None:
-                    '''Update particles so ghost appears in jail. Result is a new tuple for that particle.'''
-                    particle = self.getParticleWithGhostInJail(particle, ghost_index)
-                else:
-                    '''Calculate distance between pacman and the current particle tuple.'''
-                    if DEBUG and print_counter < 15:
-                        print('Current particle at ghost index: {}'.format(particle[ghost_index]))
-                        print_counter += 1
-
-                    curr_dist = util.manhattanDistance(particle[ghost_index], pacmanPosition)
-                    curr_emission_prob = curr_emission_prob * emissionModels[ghost_index][curr_dist]
-
-            belief_dist[particle] += curr_emission_prob
-
-        if belief_dist.totalCount() == 0:
-            ''''Handle the special case where all the particle receive zero weight'''
-            if DEBUG:
-                print('All particles have a weight of 0. Recreating using initializeParticles()')
-
-            self.initializeParticles()
-        else:
-            '''Call util.sample() on the belief_dist'''
-            new_particles = list()
-
-            for particle in range(self.numParticles):
-                curr_sample = util.sample(belief_dist)
-                new_particles.append(curr_sample)
-
-            self.particles = new_particles
 
     def getParticleWithGhostInJail(self, particle, ghostIndex):
         """
@@ -680,20 +586,6 @@ class JointParticleFilter:
 
     def getBeliefDistribution(self):
         "*** YOUR CODE HERE ***"
-
-        '''
-        Notes:
-        - Same as previous inference implementations, return the util.Counter object
-          that had been converted from a list of particles.
-        '''
-
-        belief_dist = util.Counter()
-
-        for particle in self.particles:
-            belief_dist[particle] += 1
-
-        return util.normalize(belief_dist)
-
         util.raiseNotDefined()
 
 # One JointInference module is shared globally across instances of MarginalInference
