@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -163,4 +163,63 @@ class GreedyBustersAgent(BustersAgent):
             [beliefs for i, beliefs in enumerate(self.ghostBeliefs)
              if livingGhosts[i+1]]
         "*** YOUR CODE HERE ***"
+
+        all_possible = util.Counter()
+        legal.remove('Stop')
+        best_move = legal[0]
+        counter = 0
+
+        """
+        Steps:
+        [x] Compute the most likely position of an uncaptured ghost:
+            [x] Iterating over livingGhostPositionDistributions and finding the
+                positions with the highest distributions
+            [x] Initialize the closest position variable and get that respective position
+        [x] Find the best (legal) action that moves Pacman closer to the
+            closest ghost
+            [x] Get the next successor move
+            [x] Remove the stop direction as it's useless
+            [ ] Return the move that's associated with the closest successor distance
+                between closest ghost and pacman's next move.
+        """
+
+        DEBUG = False
+
+        closest_dist = float('inf')
+        closest_successor_dist = float('inf')
+        closest_pos = None
+        best_move = None
+
+        highest_ghost_prob = []
+        distance_to_ghosts = []
+
+        for index in livingGhostPositionDistributions:
+            highest_ghost_prob.append(index.argMax())
+
+            if DEBUG:
+                print('Position with the highest distribution: {}'.format(index.argMax()))
+
+        for position in highest_ghost_prob:
+            current_dist_to_ghost = self.distancer.getDistance(pacmanPosition, position)
+
+            if DEBUG:
+                print('Distance to ghost: {} given the position: {} and pacmans position: {}'.format(current_dist_to_ghost, position, pacmanPosition))
+
+            if current_dist_to_ghost < closest_dist:
+                closest_dist = current_dist_to_ghost
+                closest_pos = position
+
+        if DEBUG:
+            print('The closest position was {}'.format(closest_pos))
+
+        for move in legal:
+            successor_move = Actions.getSuccessor(pacmanPosition, move)
+
+            # compute the best move given the distance between the successor move and the closest
+            # successor distance seen thus far.
+            if (self.distancer.getDistance(successor_move, closest_pos)) < closest_successor_dist:
+                closest_successor_dist = self.distancer.getDistance(successor_move, closest_pos)
+                best_move = move
+
+        return best_move
         util.raiseNotDefined()

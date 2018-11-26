@@ -297,7 +297,45 @@ class ParticleFilter(InferenceModule):
         emissionModel = busters.getObservationDistribution(noisyDistance)
         pacmanPosition = gameState.getPacmanPosition()
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        DEBUG = False
+        belief_dist = util.Counter()
+
+        if noisyDistance is None:
+            ''' Need to restructure all particles so that the ghost appears in prison.'''
+            new_particles = list()
+
+            if DEBUG:
+                print('Creating a new list after Pacman captured one of the ghosts.')
+
+            for particle in self.particles:
+                new_particles.append(self.getJailPosition())
+
+            self.particles = new_particles
+        else:
+            for particle in self.particles:
+                curr_dist = util.manhattanDistance(particle, pacmanPosition)
+                belief_dist[particle] += emissionModel[curr_dist]
+
+                if DEBUG:
+                    print('Current particle: {} and distance between pacman and current particle: {}'.\
+                           format(particle, curr_dist))
+
+            if belief_dist.totalCount() is 0:
+                if DEBUG:
+                    print('All the particles have a weight of 0. Recreating with previous distribution.')
+
+                self.initializeUniformly(gameState)
+            else:
+                new_particles = list()
+
+                for particle in range(self.numParticles):
+                    curr_sample = util.sample(belief_dist)
+                    new_particles.append(curr_sample)
+
+                self.particles = new_particles
+
+        return util.normalize(belief_dist)
+        # util.raiseNotDefined()
 
     def elapseTime(self, gameState):
         """
@@ -337,16 +375,16 @@ class ParticleFilter(InferenceModule):
         DEBUG = False
         belief_dist = util.Counter()
 
+        if DEBUG:
+            print('Before belief dist: {}'.format(belief_dist))
+
         for particle in self.particles:
             belief_dist[particle] += 1
 
         if DEBUG:
-            print('Before belief dist normalization: {}'.format(belief_dist))
+            print('After belief dist: {}'.format(belief_dist))
 
-        belief_dist.normalize()
-
-        if DEBUG:
-            print('After belief dist normalization: {}'.format(belief_dist))
+        return util.normalize(belief_dist)
 
         util.raiseNotDefined()
 
