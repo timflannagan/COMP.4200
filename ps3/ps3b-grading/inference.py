@@ -261,11 +261,33 @@ class ParticleFilter(InferenceModule):
         [x]. Iterate over self.legalPositions as this is a list of possible
            particle locations
            [x]. Initialize all particles within the range dictated by self.numParticles
-        '''
 
-        for position in self.legalPositions:
-            for particle in range(self.numParticles):
-                self.particles.append(position)
+        Current Problems:
+        [x]. Timing out consistently on question #5. The first two test cases pass,
+             albeit slowly, and the third times out. This should signify that the
+             observe/elapseTime implementations are correct, but the
+             initializeUniformly implementation has too go through too many iterations
+
+             Before:
+             ```python
+             for position in self.legalPositions:
+                 for particle in range(self.numParticles):
+                     self.particles.append(position)
+             ```
+
+             The above is poor as we have to iterate throughout two lists, whereas
+             now we are simply indexing a legal position given a current particle index.
+        '''
+        counter = 0
+
+        for particle_index in range(self.numParticles):
+            curr_position = self.legalPositions[particle_index % len(self.legalPositions)]
+
+            if counter > self.numParticles:
+                break
+
+            self.particles.append(curr_position)
+            counter += 1
 
     def observe(self, observation, gameState):
         """
