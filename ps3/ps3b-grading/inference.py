@@ -375,10 +375,12 @@ class ParticleFilter(InferenceModule):
         a belief distribution.
         """
         "*** YOUR CODE HERE ***"
-        newDist = []
+        belief_dist = []
+
         for particle in self.particles:
-            newDist.append(util.sample(self.getPositionDistribution(self.setGhostPosition(gameState, particle))))
-        self.particles = newDist
+            belief_dist.append(util.sample(self.getPositionDistribution(self.setGhostPosition(gameState, particle))))
+
+        self.particles = belief_dist
         # util.raiseNotDefined()
 
     def getBeliefDistribution(self):
@@ -507,11 +509,17 @@ class JointParticleFilter:
         [x]. Use itertools.product to get a list of possible, legal ghost position tuples.
         [x]. Shuffle the list of ghost positions in order to ensure even placement of
              particles across the board.
-        [ ]. Populate self.particles by iterating over self.numParticles
-             [ ].
+        [-]. Populate self.particles by iterating over self.numParticles
+        [x]. Iterate over possible_ghost_positions
+
+        Current Problems:
+        [ ]. Timing out on question #6 in bottlenose. Assuming its the same thing
+             as the problem with question #5 and need to cut down on how many
+             loop iterations I do.
         '''
 
         DEBUG = False
+        counter = 0
 
         possible_ghost_positions = list(itertools.product(self.legalPositions, repeat = self.numGhosts))
 
@@ -520,12 +528,16 @@ class JointParticleFilter:
 
         random.shuffle(possible_ghost_positions)
 
+
         if DEBUG:
             print('Possible ghost positions (after shuffle): {}'.format(possible_ghost_positions[0:10]))
 
-        for particle in range(self.numParticles):
-            for ghost_position in possible_ghost_positions:
-                self.particles.append(ghost_position)
+        for ghost_position in possible_ghost_positions:
+            if counter >= self.numParticles:
+                break
+
+            self.particles.append(ghost_position)
+            counter += 1
 
         if DEBUG:
             print('Particles list (sectioned): {}'.format(self.particles[0:10]))
